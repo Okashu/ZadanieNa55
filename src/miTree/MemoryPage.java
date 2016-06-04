@@ -11,7 +11,7 @@ import java.util.ArrayList;
 public class MemoryPage<K extends Comparable<K>, V> {
 	private ObjectOutputStream writer;
 	private int PageSize = 1024; // TODO xd
-	private ObjectInputStream reader;			
+	private ObjectInputStream reader;
 
 	public void setWriter(String filename) {
 		try {
@@ -29,19 +29,19 @@ public class MemoryPage<K extends Comparable<K>, V> {
 		int nodeLength = 0;
 		int nodeSize = (int) (PageSize / (Math.pow(2, height)));
 		// musi byæ podzielne
-															
+
 		if (nodes.size() > height) {
 			System.out.println("Error, to many nodes, not enough height");
 		}
 		if (nodes.size() < height) {
-			for (int i = 1; i < height - nodes.size(); i++) 
+			for (int i = 1; i < height - nodes.size(); i++)
 				nodeSize *= 2;
 			write(nodeSize);
 		}
 		for (int i = 0; i < nodes.size(); i++) {
 			nodeLength += write(nodes.get(i)); // zapisuje obiekt
 
-			if (nodeLength <= nodeSize) 	// zapycha reszte
+			if (nodeLength <= nodeSize) // zapycha reszte
 				write(nodeSize - nodeLength);
 			else
 				System.out.println("Error, Out Of Memory");
@@ -49,7 +49,7 @@ public class MemoryPage<K extends Comparable<K>, V> {
 		}
 	}
 
-	public byte[] serialize(Object obj) throws IOException { 			
+	public byte[] serialize(Object obj) throws IOException {
 		// super na okolo
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		ObjectOutputStream os = new ObjectOutputStream(out);
@@ -63,7 +63,7 @@ public class MemoryPage<K extends Comparable<K>, V> {
 		try {
 			byte[] obj = serialize(node);
 			nodeLength = obj.length;
-			writer.write(ByteBuffer.allocate(4).putInt(nodeLength).array()); 
+			writer.write(ByteBuffer.allocate(4).putInt(nodeLength).array());
 			// 4 pierwsze bity do dlugosc serializacji obiektu
 			writer.writeObject(node);
 		} catch (IOException e) {
@@ -74,13 +74,13 @@ public class MemoryPage<K extends Comparable<K>, V> {
 	}
 
 	public void write(int offset) {
-		for (int i = 0; i < offset; i++)
-			try {
-				writer.write(ByteBuffer.allocate(offset).array());
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+
+		try {
+			writer.write(ByteBuffer.allocate(offset).array());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public Node<K, V> read(int offset) {
