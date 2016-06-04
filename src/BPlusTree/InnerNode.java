@@ -1,4 +1,5 @@
 package BPlusTree;
+
 import java.util.*;
 
 public class InnerNode<K extends Comparable<K>, V> extends Node<K, V> {
@@ -8,6 +9,12 @@ public class InnerNode<K extends Comparable<K>, V> extends Node<K, V> {
 	public InnerNode(int order) {
 		super(order);
 		children = new ArrayList<Node<K,V>>(ORDER+1);
+	}
+	
+	//powoduje zmniejszenie minimalnego rozmiaru inner-node'ów, zapobiega to
+	//przepełnianiu drzewa przy pożyczaniu kluczy od sąsiadów
+	public boolean canLendAKey(){
+		return keys.size() > Math.ceil((double)(ORDER+1)/2-1);
 	}
 
 	public Split<K, V> insert(K key, V value) {
@@ -45,18 +52,157 @@ public class InnerNode<K extends Comparable<K>, V> extends Node<K, V> {
 		System.out.println(prefix + "Inner Node");
 		for(int i=0; i<children.size(); i++){
 			children.get(i).dump(prefix + " ");
-			if(i<ORDER && i<keys.size()){
+			if(i<keys.size()){
 				System.out.println(prefix + "+Key: " + keys.get(i));
 			}
 		}
 	}
+	
+	// zwraca lewego brata podanego dziecka
+	public Node<K,V> getChildsLeftSibling(Node<K,V> child){
+		for(int i=1; i < children.size(); i++){
+			if (children.get(i) == child){
+				return children.get(i-1);
+			}
+		}
+		return null;
+	}
+	
+	// zwraca prawego brata podanego dziecka
+	public Node<K,V> getChildsRightSibling(Node<K,V> child){
+		for(int i=0; i < children.size()-1; i++){
+			if (children.get(i) == child){
+				return children.get(i+1);
+			}
+		}
+		return null;
+	}
 
-	/*@Override
-	public Merge<K, V> remove(K key) {
+	// TODO: zmienic RemoveResult na cos mniej beznadziejnego?
+	public RemoveResult<K, V> remove(K key, InnerNode<K,V> parent) {
 		int i = getKeyLocation(key);
-		Merge<K,V> merge = children.get(i).remove(key);
+		RemoveResult<K,V> result = children.get(i).remove(key, this);
+
+		if (result instanceof UpdateKeyRemoveResult){
+			// przeniesiono klucze miedzy braćmi, zatem trzeba zmienic klucz dzielacy
+			UpdateKeyRemoveResult<K,V> uResult = (UpdateKeyRemoveResult<K,V>)result;
+			if(uResult.changedLeft){
+				this.keys.set(i-1, uResult.key);
+			} else {
+				this.keys.set(i, uResult.key);
+			}
+		}
+		if (result instanceof RemoveSplitKeyResult){
+			// polaczono braci, zatem trzeba usunac klucz dzielacy
+			RemoveSplitKeyResult<K,V> rResult = (RemoveSplitKeyResult<K,V>)result;
+			if(rResult.changedLeft){
+				// trzeba usunac i-1-ty klucz
+				keys.remove(i-1);
+				children.remove(i-1);
+			} else {
+				// trzeba usunac i-ty klucz
+				keys.remove(i);
+				children.remove(i+1);
+			}
+			
+			if(parent == null){ // jesli to root
+				if(keys.size() == 0){
+					// usunieto wszystkie klucze, wiec zostalo sie jedno dziecko
+					// dziecko staje sie nowym root'em
+					return new ChangeRootRemoveResult<K,V>(this.children.get(0));
+				} else {
+					return null;
+				}
+			} else {
+				// poniewaz usunieto klucz, kluczy moze byc za malo
+				if(this.needsToBeMerged()){
+					return handleMerger(parent);
+				} else {
+					return null;
+				}
+			}
+
+		}
 		
 		return null;
-	}*/ //todo
+	}
+	
+	// zwraca klucz oddzielajacy dwoch braci
+	public K getChildSplitKey(Node<K,V> child, boolean leftSibling){
+		if(!leftSibling && children.get(0) == child){
+			return keys.get(0);
+		}
+		for(int i=1; i < children.size(); i++){
+			if (children.get(i) == child){
+				if(leftSibling){
+					return keys.get(i-1);
+				} else {
+					return keys.get(i);
+				}
+			}
+		}
+		return null;
+	}
+
+	protected void mergeWith(Node<K, V> mergingNode, boolean mergeToLeft, K splitKey) {
+		// polacz klucze i dzieci, dodatkowo wstaw klucz dzielacy braci z rodzica
+		if (mergeToLeft){
+			keys.add(0, splitKey);
+			keys.addAll(0, mergingNode.keys);
+			children.addAll(0, ((InnerNode<K,V>)mergingNode).children);
+		} else {
+			keys.add(splitKey);
+			keys.addAll(mergingNode.keys);
+			children.addAll(((InnerNode<K,V>)mergingNode).children);
+		}	
+	}
+
+	protected K borrowKeys(Node<K, V> lender, boolean borrowFromLeft, K splitKey) {
+		K pushedKey = null;
+		int lenderIndex = (borrowFromLeft) ? (lender.keys.size() - 1) : 0;
+		if(borrowFromLeft){
+			// pozycza z lewej
+			// w tym celu bierze takze klucz z rodzica, zas klucz z brata przechodzi na rodzica
+			keys.add(0, splitKey);
+			children.add(0,((InnerNode<K,V>)lender).children.get(lenderIndex + 1));
+			pushedKey = lender.keys.get(lenderIndex);
+			
+			lender.keys.remove(lenderIndex);
+			((InnerNode<K,V>)lender).children.remove(lenderIndex + 1);
+		} else {
+			// pozycza z prawej
+			// w tym celu bierze takze klucz z rodzica, zas klucz z brata przechodzi na rodzica
+			keys.add(splitKey);
+			children.add(((InnerNode<K,V>)lender).children.get(lenderIndex));
+			pushedKey = lender.keys.get(lenderIndex);
+			
+			lender.keys.remove(lenderIndex);
+			((InnerNode<K,V>)lender).children.remove(lenderIndex);	
+		}
+		return pushedKey;
+	}
+
+	/*public void checkForErrors(boolean root) {
+		if(needsToBeSplit() && !root){
+			System.out.println("cos sie nie rozdzielilo");
+		}
+		if(children.size() != (keys.size()+1)){
+			System.out.println("cos sie rozjechalo");
+		}
+		for(int i=0; i<children.size(); i++){
+			children.get(i).checkForErrors(false);
+			if(i<ORDER && i<keys.size()){
+				if (keys.get(i) == null){
+					System.out.println("cos sie znullowalo");
+				}
+				if(children.get(i) instanceof LeafNode){
+					if (i >= 0 && ((LeafNode<K,V>)children.get(i)).keys.get(0).compareTo(((LeafNode<K,V>)children.get(i+1)).keys.get(0)) >= 0){
+						System.out.println("cos jest nie po kolei");
+					}
+				}
+
+			}
+		}
+	}*/ //DEBUG
 
 }

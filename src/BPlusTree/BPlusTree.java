@@ -1,5 +1,6 @@
 package BPlusTree;
 
+
 public class BPlusTree<K extends Comparable<K>, V> {
 	
 	private Node<K,V> root;
@@ -64,13 +65,26 @@ public class BPlusTree<K extends Comparable<K>, V> {
 		}
 	}
 	
-	/*public boolean remove(K key){
-		Merge<K,V> merge = root.remove(key);
-		return false;
-	}*/ //todo
+	public boolean remove(K key){
+		if(find(key) == null){ //to raczej nie jest potrzebne ale zapobiega ew. bledom
+			return false;
+		}
+		RemoveResult<K,V> merge = root.remove(key, null);
+		if (merge instanceof ChangeRootRemoveResult){
+			//zmieniono root, wysokosc zmniejszona o 1
+			root = ((ChangeRootRemoveResult<K,V>)merge).newRoot;
+			height--;
+		}
+		//checkForErrors(); //DEBUG
+		return true;
+	}
 	
 	public void dump(){
 		root.dump("");
 	}
+	
+	/*private void checkForErrors(){
+		root.checkForErrors(true);
+	}*/ //DEBUG
 
 }
