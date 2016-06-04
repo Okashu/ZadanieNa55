@@ -1,4 +1,5 @@
 package BPlusTree;
+
 import java.util.*;
 
 public class LeafNode<K extends Comparable<K>, V> extends Node<K, V> {
@@ -10,6 +11,7 @@ public class LeafNode<K extends Comparable<K>, V> extends Node<K, V> {
 		values = new ArrayList<V>(ORDER);
 	}
 	
+	// zwraca dokladna lokalizacje klucza, -1 gdy liść go nie posiada
 	public int getExactKeyLocation(K key){
 		int i = getKeyLocation(key);
 		if (i>0 && i<=keys.size() && keys.get(i-1).equals(key)){
@@ -56,11 +58,51 @@ public class LeafNode<K extends Comparable<K>, V> extends Node<K, V> {
 		}
 	}
 
-	/*@Override
-	public Merge<K, V> remove(K key) {
-		int loc = getExactKeyLocation(key);
+	public RemoveResult<K, V> remove(K key, InnerNode<K,V> parent) {
+		int i = getExactKeyLocation(key);
+		if (i < 0){
+			return null;
+		}
+		keys.remove(i);
+		values.remove(i);
+		if(this.needsToBeMerged()){
+			return this.handleMerger(parent);
+		} else {
+			return null;
+		}
+	}
+
+	protected void mergeWith(Node<K, V> mergingNode, boolean mergeToLeft, K splitKey) {
+		//polacz tablice kluczy i wartosci
+		if (mergeToLeft){
+			keys.addAll(0, mergingNode.keys);
+			values.addAll(0, ((LeafNode<K,V>)mergingNode).values);
+		} else {
+			keys.addAll(mergingNode.keys);
+			values.addAll(((LeafNode<K,V>)mergingNode).values);
+		}
+	}
+
+	protected K borrowKeys(Node<K, V> lender, boolean borrowFromLeft, K splitKey) {
+		//pozycz jeden klucz i wartosc z konca lewego brata lub poczatku prawego brata
+		int borrowerIndex = (borrowFromLeft) ? 0 : (this.keys.size());
+		int lenderIndex = (borrowFromLeft) ? (lender.keys.size() - 1) : 0;
+		keys.add(borrowerIndex, lender.keys.get(lenderIndex));
+		values.add(borrowerIndex, ((LeafNode<K,V>)lender).values.get(lenderIndex));
 		
-		return null;
-	}*/ //todo
+		lender.keys.remove(lenderIndex);
+		((LeafNode<K,V>)lender).values.remove(lenderIndex);
+		
+		return (borrowFromLeft) ? this.keys.get(0) : lender.keys.get(0);
+	}
+
+	//DEBUG
+	/*public void checkForErrors(boolean root) {
+		for(int i=0; i<keys.size(); i++){
+			if (keys.get(i) == null){
+				System.out.println("cos sie znullowalo w lisciu");
+			}
+		}
+	}*/
 
 }
