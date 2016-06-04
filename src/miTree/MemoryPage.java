@@ -30,7 +30,7 @@ public class MemoryPage<K extends Comparable<K>, V> {
 
 		int nodeLength = 0;
 		int nodeSize = (int) (PageSize / (Math.pow(2, height)));
-		// musi byæ podzielne
+		// musi byÃ¦ podzielne
 
 		if (nodes.size() > height) {
 			System.out.println("Error, to many nodes, not enough height");
@@ -44,7 +44,7 @@ public class MemoryPage<K extends Comparable<K>, V> {
 			for (int i = 0; i < nodes.size(); i++) {
 				nodeLength += write(nodes.get(i)); // zapisuje obiekt
 
-				if (nodeLength <= nodeSize) // zapycha reszte
+				if (nodeLength < nodeSize) // zapycha reszte
 					write(nodeSize - nodeLength);
 				else
 					System.out.println("Error, Out Of Memory");
