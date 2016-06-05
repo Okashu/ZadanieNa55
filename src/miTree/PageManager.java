@@ -1,14 +1,21 @@
 package miTree;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class PageManager<K extends Comparable<K>, V> {
 	private int pageSize;
 	private int treeHeight;
-	private List<MemoryPage> pageList;
+	private List<MemoryPage<K, V>> pageList;
+	
+	public void allocateNewPage(){
+		int newPageID = pageList.size();
+		pageList.add(new MemoryPage<K, V>(newPageID));
+	}
 	
 	public PageManager(int pageSize){
 		this.pageSize = pageSize;
+		pageList = new ArrayList<MemoryPage<K, V>>();
 	}
 	
 	public Node<K, V> getNodeFromPage(int pageID, int level){
@@ -27,5 +34,9 @@ public class PageManager<K extends Comparable<K>, V> {
 			return null;
 		}
 		
+	}
+	
+	public void writeNodeToPage(Node<K, V> node, int pageID, int level){
+		pageList.get(pageID).write(node, level, treeHeight);
 	}
 }

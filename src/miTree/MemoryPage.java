@@ -10,14 +10,14 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 public class MemoryPage<K extends Comparable<K>, V> {
-	private int PageSize = 1024; // TODO xd
+	private int pageSize = 1024; // TODO xd
 	private String fileName;
 
 	public MemoryPage(int pageID) {
 		fileName = Integer.toString(pageID) + ".BIN";
 		try {
 			FileOutputStream out = new FileOutputStream(fileName);
-			write(out, PageSize); // tworzy plik i zape³nia niczym
+			write(out, pageSize); // tworzy plik i zape³nia niczym
 			out.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -28,16 +28,20 @@ public class MemoryPage<K extends Comparable<K>, V> {
 	public void write(Node<K, V> node, int lvl, int height) {
 		File file = new File(fileName);
 		File temp = new File("temp.BIN");
-		int begining = 0;
-		int nodeSize = 0;
+		int beginning = 0;	//liczba bitów przed node'em do wpisania
+		int nodeSize = 0;	
 		int nodeLength = 0;
 		if (lvl != height)
-			begining = (int) (PageSize / Math.pow(2, lvl));
-		nodeSize = PageSize - begining;
+			beginning = (int) (pageSize / Math.pow(2, lvl));
+		
+		nodeSize = (int)(pageSize / Math.pow(2,  lvl));
+		if(lvl == height)
+			nodeSize *= 2;
+		
 		try {
 			FileInputStream in = new FileInputStream(fileName);
 			FileOutputStream out = new FileOutputStream("temp.BIN");
-			for (int i = 0; i < begining; i++) { // kopiowanie do momentu noda
+			for (int i = 0; i < beginning; i++) { // kopiowanie do momentu noda
 				out.write(in.read());
 			}
 			nodeLength = write(out, node);	// zapisywanie noda
@@ -50,7 +54,7 @@ public class MemoryPage<K extends Comparable<K>, V> {
 			in.skip(nodeSize);
 			if (lvl != 1) // nie liœæ, kopiowanie reszty
 			{
-				for (int i = begining + nodeSize; i < PageSize; i++)
+				for (int i = beginning + nodeSize; i < pageSize; i++)
 					out.write(in.read());
 				//uwazac na to czy nie wyleci poza pli i nie rzuci EOF
 			}
@@ -99,7 +103,7 @@ public class MemoryPage<K extends Comparable<K>, V> {
 			FileInputStream in = new FileInputStream(fileName);
 			ObjectInputStream reader = new ObjectInputStream(in);
 			reader.skip(offset);
-			node = (Node<K, V>) reader.readObject();
+			node = (Node<K, V>)reader.readObject();
 			in.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
