@@ -50,6 +50,22 @@ public class Main {
 			}
 		}
 		tree2.dump(); //powinny zostac sie liscie postaci 14+16k
+		tree2.insert(15, 15);
+		tree2.insert(33, 33);
+		tree2.remove(14);
+		System.out.println("!");
+		tree2.dump();
+		
+		BPlusTree<Integer, Integer> tree3 = new BPlusTree<Integer, Integer>(4);
+		tree3.insert(3,3);
+		tree3.insert(2, 2);
+		tree3.dump();
+		tree3.remove(2);
+		tree3.dump();
+		tree3.remove(3);
+		tree3.dump();
+		tree3.insert(2, 2);
+		tree3.dump();
 		
 	}
 

@@ -58,17 +58,17 @@ public class LeafNode<K extends Comparable<K>, V> extends Node<K, V> {
 		}
 	}
 
-	public RemoveResult<K, V> remove(K key, InnerNode<K,V> parent) {
+	public boolean remove(K key, InnerNode<K,V> parent) {
 		int i = getExactKeyLocation(key);
 		if (i < 0){
-			return null;
+			return false;
 		}
 		keys.remove(i);
 		values.remove(i);
 		if(this.needsToBeMerged()){
 			return this.handleMerger(parent);
 		} else {
-			return null;
+			return false;
 		}
 	}
 

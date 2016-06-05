@@ -12,7 +12,7 @@ public class InnerNode<K extends Comparable<K>, V> extends Node<K, V> {
 	}
 	
 	//powoduje zmniejszenie minimalnego rozmiaru inner-node'ów, zapobiega to
-	//przepełnianiu drzewa przy pożyczaniu kluczy od sąsiadów
+	//przepełnianiu drzewa przy pożyczaniu kluczy od braci
 	public boolean canLendAKey(){
 		return keys.size() > Math.ceil((double)(ORDER+1)/2-1);
 	}
@@ -78,53 +78,33 @@ public class InnerNode<K extends Comparable<K>, V> extends Node<K, V> {
 		return null;
 	}
 
-	// TODO: zmienic RemoveResult na cos mniej beznadziejnego?
-	public RemoveResult<K, V> remove(K key, InnerNode<K,V> parent) {
+	public boolean remove(K key, InnerNode<K,V> parent) {
 		int i = getKeyLocation(key);
-		RemoveResult<K,V> result = children.get(i).remove(key, this);
+		boolean changedKeysSize = children.get(i).remove(key, this);
 
-		if (result instanceof UpdateKeyRemoveResult){
-			// przeniesiono klucze miedzy braćmi, zatem trzeba zmienic klucz dzielacy
-			UpdateKeyRemoveResult<K,V> uResult = (UpdateKeyRemoveResult<K,V>)result;
-			if(uResult.changedLeft){
-				this.keys.set(i-1, uResult.key);
-			} else {
-				this.keys.set(i, uResult.key);
-			}
-		}
-		if (result instanceof RemoveSplitKeyResult){
-			// polaczono braci, zatem trzeba usunac klucz dzielacy
-			RemoveSplitKeyResult<K,V> rResult = (RemoveSplitKeyResult<K,V>)result;
-			if(rResult.changedLeft){
-				// trzeba usunac i-1-ty klucz
-				keys.remove(i-1);
-				children.remove(i-1);
-			} else {
-				// trzeba usunac i-ty klucz
-				keys.remove(i);
-				children.remove(i+1);
-			}
+		if (changedKeysSize){
+			// syn zmienil liczbe kluczy rodzica
 			
-			if(parent == null){ // jesli to root
+			if(parent == null){ // jesli to nie root
 				if(keys.size() == 0){
 					// usunieto wszystkie klucze, wiec zostalo sie jedno dziecko
 					// dziecko staje sie nowym root'em
-					return new ChangeRootRemoveResult<K,V>(this.children.get(0));
+					return true;
 				} else {
-					return null;
+					return false;
 				}
 			} else {
 				// poniewaz usunieto klucz, kluczy moze byc za malo
 				if(this.needsToBeMerged()){
 					return handleMerger(parent);
 				} else {
-					return null;
+					return false;
 				}
 			}
 
 		}
 		
-		return null;
+		return false;
 	}
 	
 	// zwraca klucz oddzielajacy dwoch braci
@@ -138,6 +118,43 @@ public class InnerNode<K extends Comparable<K>, V> extends Node<K, V> {
 					return keys.get(i-1);
 				} else {
 					return keys.get(i);
+				}
+			}
+		}
+		return null;
+	}
+	
+	// zmienia klucz oddzielajacy dwoch braci
+	public K setChildSplitKey(Node<K,V> child, boolean leftSibling, K key){
+		if(!leftSibling && children.get(0) == child){
+			keys.set(0, key);
+		}
+		for(int i=1; i < children.size(); i++){
+			if (children.get(i) == child){
+				if(leftSibling){
+					return keys.set(i-1, key);
+				} else {
+					return keys.set(i, key);
+				}
+			}
+		}
+		return null;
+	}
+	
+	// usuwa klucz oddzielajacy pierwotnie oddzielajacy dwoch polaczonych braci
+	public K removeChildSplitKey(Node<K,V> child, boolean leftSibling){
+		if(!leftSibling && children.get(0) == child){
+			keys.remove(0);
+			children.remove(1);
+		}
+		for(int i=1; i < children.size(); i++){
+			if (children.get(i) == child){
+				if(leftSibling){
+					keys.remove(i-1);
+					children.remove(i-1);
+				} else {
+					keys.remove(i);
+					children.remove(i+1);
 				}
 			}
 		}
