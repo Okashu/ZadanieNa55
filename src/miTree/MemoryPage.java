@@ -10,10 +10,11 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 public class MemoryPage<K extends Comparable<K>, V> {
-	private int pageSize = 1024; // TODO xd
+	private int pageSize; // TODO xd
 	private String fileName;
 
-	public MemoryPage(int pageID) {
+	public MemoryPage(int pageID, int pageSize) {
+		this.pageSize = pageSize;
 		fileName = Integer.toString(pageID) + ".BIN";
 		try {
 			FileOutputStream out = new FileOutputStream(fileName);
@@ -29,12 +30,10 @@ public class MemoryPage<K extends Comparable<K>, V> {
 		File file = new File(fileName);
 		File temp = new File("temp.BIN");
 		int beginning = 0;	//liczba bitów przed node'em do wpisania
-		int nodeSize = 0;	
+		int nodeSize =  (int) (pageSize / Math.pow(2, lvl));
 		int nodeLength = 0;
-		if (lvl != height)
-			beginning = (int) (pageSize / Math.pow(2, lvl));
+		beginning = (lvl == height) ? 0 : nodeSize;
 		
-		nodeSize = (int)(pageSize / Math.pow(2,  lvl));
 		if(lvl == height)
 			nodeSize *= 2;
 		

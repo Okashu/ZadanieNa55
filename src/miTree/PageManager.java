@@ -8,9 +8,10 @@ public class PageManager<K extends Comparable<K>, V> {
 	private int treeHeight;
 	private List<MemoryPage<K, V>> pageList;
 	
-	public void allocateNewPage(){
+	public int allocateNewPage(){
 		int newPageID = pageList.size();
-		pageList.add(new MemoryPage<K, V>(newPageID));
+		pageList.add(new MemoryPage<K, V>(newPageID, pageSize));
+		return newPageID;
 	}
 	
 	public PageManager(int pageSize){
@@ -39,4 +40,5 @@ public class PageManager<K extends Comparable<K>, V> {
 	public void writeNodeToPage(Node<K, V> node, int pageID, int level){
 		pageList.get(pageID).write(node, level, treeHeight);
 	}
+	
 }
