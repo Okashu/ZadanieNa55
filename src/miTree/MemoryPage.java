@@ -1,55 +1,23 @@
 package miTree;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.ArrayList;
 
 public class MemoryPage<K extends Comparable<K>, V> {
 	private int PageSize = 1024; // TODO xd
-	private ObjectOutputStream writer;
-	private FileOutputStream out;
-	private int pageID;
+	private String fileName;
 
-	public void setWriter(String filename) {
+	public MemoryPage(int pageID) {
+		fileName = Integer.toString(pageID) + ".BIN";
 		try {
-			out = new FileOutputStream(filename + ".BIN");
-			writer = new ObjectOutputStream(out);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
-	public MemoryPage(ArrayList<Node<K, V>> nodes, int height, int pageID) {
-		this.pageID = pageID;
-		setWriter(Integer.toString(pageID));
-
-		int nodeLength = 0;
-		int nodeSize = (int) (PageSize / (Math.pow(2, height)));
-		// musi byÃ¦ podzielne
-
-		if (nodes.size() > height) {
-			System.out.println("Error, to many nodes, not enough height");
-		}
-		try {
-			if (nodes.size() < height) {
-				for (int i = 1; i < height - nodes.size(); i++)
-					nodeSize *= 2;
-				write(nodeSize);
-			}
-			for (int i = 0; i < nodes.size(); i++) {
-				nodeLength += write(nodes.get(i)); // zapisuje obiekt
-
-				if (nodeLength < nodeSize) // zapycha reszte
-					write(nodeSize - nodeLength);
-				else
-					System.out.println("Error, Out Of Memory");
-				nodeSize *= 2;
-			}
+			FileOutputStream out = new FileOutputStream(fileName);
+			write(out, PageSize); // tworzy plik i zape³nia niczym
 			out.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -57,34 +25,81 @@ public class MemoryPage<K extends Comparable<K>, V> {
 		}
 	}
 
-	public byte[] serialize(Object obj) throws IOException {
+	public void write(Node<K, V> node, int lvl, int height) {
+		File file = new File(fileName);
+		File temp = new File("temp.BIN");
+		int begining = 0;
+		int nodeSize = 0;
+		int nodeLength = 0;
+		if (lvl != height)
+			begining = (int) (PageSize / Math.pow(2, lvl));
+		nodeSize = PageSize - begining;
+		try {
+			FileInputStream in = new FileInputStream(fileName);
+			FileOutputStream out = new FileOutputStream("temp.BIN");
+			for (int i = 0; i < begining; i++) { // kopiowanie do momentu noda
+				out.write(in.read());
+			}
+			nodeLength = write(out, node);	// zapisywanie noda
+			if (nodeSize >= nodeLength) { 	//dopychanie 
+				write(out, nodeSize - nodeLength);
+			} else
+				System.out.println("ERROR, not enough memory");
+			// zrobiæ coœ bardziej zauwazalnego, jakieœ exception
+			
+			in.skip(nodeSize);
+			if (lvl != 1) // nie liœæ, kopiowanie reszty
+			{
+				for (int i = begining + nodeSize; i < PageSize; i++)
+					out.write(in.read());
+				//uwazac na to czy nie wyleci poza pli i nie rzuci EOF
+			}
+			in.close();
+			out.close();
+			file.delete();
+			temp.renameTo(file);
+
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+
+	private int serializationLength(Object obj) throws IOException {
 		// zeby poznac dlugosc serializacji
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		ObjectOutputStream os = new ObjectOutputStream(out);
 		os.writeObject(obj);
-		return out.toByteArray();
+		return out.toByteArray().length;
 	}
 
-	public int write(Node<K, V> node) throws IOException {
+	private int write(FileOutputStream out, Node<K, V> node) throws IOException {
 		int nodeLength = 0;
-		byte[] obj = serialize(node);
-		nodeLength = obj.length;
+		ObjectOutputStream writer = new ObjectOutputStream(out);
+		nodeLength = serializationLength(node);
 		writer.writeObject(node);
 		return nodeLength;
 	}
 
-	public void write(int offset) throws IOException {
-		byte[] buf=new byte[offset];
-		writer.write(buf);
+	private void write(FileOutputStream out, int offset) throws IOException {
+		if (offset > 0) {			//dla bezpieczenstwa
+			byte[] buf = new byte[offset];
+			out.write(buf);
+		}
+
 	}
 
 	public Node<K, V> read(int offset) {
-		Node<K,V> node=null;
+		Node<K, V> node = null;
 		try {
-			FileInputStream in = new FileInputStream(Integer.toString(pageID) + ".BIN");
-			ObjectInputStream reader=new ObjectInputStream(in);
+			FileInputStream in = new FileInputStream(fileName);
+			ObjectInputStream reader = new ObjectInputStream(in);
 			reader.skip(offset);
-			node=(Node<K,V>) reader.readObject();
+			node = (Node<K, V>) reader.readObject();
 			in.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
