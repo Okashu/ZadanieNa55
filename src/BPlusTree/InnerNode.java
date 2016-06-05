@@ -85,7 +85,7 @@ public class InnerNode<K extends Comparable<K>, V> extends Node<K, V> {
 		if (changedKeysSize){
 			// syn zmienil liczbe kluczy rodzica
 			
-			if(parent == null){ // jesli to nie root
+			if(parent == null){ // jesli to root
 				if(keys.size() == 0){
 					// usunieto wszystkie klucze, wiec zostalo sie jedno dziecko
 					// dziecko staje sie nowym root'em
