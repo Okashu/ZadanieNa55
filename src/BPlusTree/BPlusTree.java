@@ -66,13 +66,14 @@ public class BPlusTree<K extends Comparable<K>, V> {
 	}
 	
 	public boolean remove(K key){
-		if(find(key) == null){ //to raczej nie jest potrzebne ale zapobiega ew. bledom
+		if(find(key) == null){
 			return false;
 		}
-		RemoveResult<K,V> merge = root.remove(key, null);
-		if (merge instanceof ChangeRootRemoveResult){
-			//zmieniono root, wysokosc zmniejszona o 1
-			root = ((ChangeRootRemoveResult<K,V>)merge).newRoot;
+		boolean rootEmptyKeys = root.remove(key, null);
+		if (rootEmptyKeys){
+			//root ma 0 kluczy i jednego potomka
+			//root przechodzi na swojego potomka, wysokosc drzewa zmniejszona o 1
+			root = ((InnerNode<K,V>)root).children.get(0);
 			height--;
 		}
 		//checkForErrors(); //DEBUG
