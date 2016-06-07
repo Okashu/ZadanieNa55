@@ -7,6 +7,7 @@ public class InnerNode<K extends Comparable<K>, V> extends Node<K, V> {
 	
 	public InnerNode(int order) {
 		super(order);
+		pageIDs = new ArrayList<Integer>(ORDER+1);
 	}
 	
 	//powoduje zmniejszenie minimalnego rozmiaru inner-node'ów, zapobiega to
@@ -23,14 +24,17 @@ public class InnerNode<K extends Comparable<K>, V> extends Node<K, V> {
 		pageIDs.set(index, pageNumber);
 	}
 
-	public Split<K, V> insert(K key, V value, int level) {
+	public Split<K, V> insert(K key, V value, Integer pageID, PageManager<K, V> pageManager, Integer currentLevel){
+		
 		int i = getKeyLocation(key);
-		Split<K,V> split = getChild(i).insert(key, value, level - 1);
+		Split<K,V> split = getChild(i,currentLevel-1,pageManager).insert(key, value,pageID,pageManager, currentLevel - 1);
 		
 		if (split != null){
 			int j = getKeyLocation(split.key);
 			keys.add(j, split.key);
-			children.add(j+1, split.right);
+			int temp=pageManager.allocateNewPage();
+			pageManager.writeNodeToPage(split.right,temp,currentLevel);
+			pageIDs.add(j+1, temp);
 			
 			if(needsToBeSplit()){
 				return this.split();
