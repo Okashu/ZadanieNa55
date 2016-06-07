@@ -20,7 +20,7 @@ public class BPlusTree<K extends Comparable<K>, V> {
 		Node<K,V> node = root;
 		while (node instanceof InnerNode){
 			InnerNode<K,V> inner = (InnerNode<K,V>)node;
-			node = inner.children.get(inner.getKeyLocation(key));
+			node = inner.getChild(inner.getKeyLocation(key));
 		}
 		LeafNode<K,V> leaf = (LeafNode<K,V>) node;
 		return leaf;
@@ -56,7 +56,7 @@ public class BPlusTree<K extends Comparable<K>, V> {
 		if(leaf != null){
 			int loc = leaf.getExactKeyLocation(key);
 			if (loc >= 0){
-				return leaf.values.get(loc);
+				return leaf.getValue(loc);
 			} else {
 				return null;
 			}
@@ -73,7 +73,7 @@ public class BPlusTree<K extends Comparable<K>, V> {
 		if (rootEmptyKeys){
 			//root ma 0 kluczy i jednego potomka
 			//root przechodzi na swojego potomka, wysokosc drzewa zmniejszona o 1
-			root = ((InnerNode<K,V>)root).children.get(0);
+			root = ((InnerNode<K,V>)root).getChild(0); //tu bedzie pageNumber
 			height--;
 		}
 		//checkForErrors(); //DEBUG
