@@ -14,6 +14,12 @@ public class PageManager<K extends Comparable<K>, V> {
 		return newPageID;
 	}
 	
+	public int allocateNewValuePage(){
+		int newPageID = pageList.size();
+		pageList.add(new ValuePage<K, V>(newPageID, pageSize));
+		return newPageID;
+	}
+	
 	public PageManager(int pageSize){
 		this.pageSize = pageSize;
 		pageList = new ArrayList<MemoryPage<K, V>>();
