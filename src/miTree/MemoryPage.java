@@ -10,7 +10,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 public class MemoryPage<K extends Comparable<K>, V> {
-	private int pageSize; // TODO xd
+	private int pageSize;
 	private String fileName;
 
 	public MemoryPage(int pageID, int pageSize) {

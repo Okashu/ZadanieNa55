@@ -1,6 +1,7 @@
-package BPlusTree;
+package miTreePrototype;
 
 import java.util.*;
+
 
 public class LeafNode<K extends Comparable<K>, V> extends Node<K, V> {
 	
@@ -9,8 +10,8 @@ public class LeafNode<K extends Comparable<K>, V> extends Node<K, V> {
 		super(order);
 	}
 	
-	public V getValue(int index){
-		return values.get(index); //tu bedzie czytanie z valuePage
+	public V getValue(int index, miTree.PageManager<K, V> pageManager){
+		return (V)(pageManager.getPage(index).readValue());
 	}
 	
 	// zwraca dokladna lokalizacje klucza, -1 gdy liść go nie posiada

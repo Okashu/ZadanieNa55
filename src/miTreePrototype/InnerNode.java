@@ -1,4 +1,4 @@
-package BPlusTree;
+package miTreePrototype;
 
 import java.util.*;
 
@@ -7,7 +7,6 @@ public class InnerNode<K extends Comparable<K>, V> extends Node<K, V> {
 	
 	public InnerNode(int order) {
 		super(order);
-		children = new ArrayList<Node<K,V>>(ORDER+1);
 	}
 	
 	//powoduje zmniejszenie minimalnego rozmiaru inner-node'ów, zapobiega to
@@ -16,13 +15,12 @@ public class InnerNode<K extends Comparable<K>, V> extends Node<K, V> {
 		return keys.size() > Math.ceil((double)(ORDER+1)/2-1);
 	}
 	
-	public Node<K, V> getChild(int index){
-		//tu bedzie trzeba dac getNodeFromPage
-		return children.get(index);
+	public Node<K, V> getChild(int index, int myLevel, miTree.PageManager pageManager){
+		return pageManager.getNodeFromPage(index, myLevel);
 	}
 	
-	public void setChild(int index, Node<K, V> node){ //pageNumber
-		children.set(index, node);
+	public void setChild(int index, int pageNumber){ //pageNumber
+		pageIDs.set(index, pageNumber);
 	}
 
 	public Split<K, V> insert(K key, V value, int level) {

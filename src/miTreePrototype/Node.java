@@ -18,13 +18,6 @@ public abstract class Node<K extends Comparable<K>, V> {
 		pageIDs = new ArrayList<Integer>(ORDER + 1);
 	}
 	
-	
-	
-	public V getValue(int index, PageManager pageManager){
-	//TODO odczyt wartoœci	
-		return null;
-	}
-	
 	public int getKeyLocation(K key){
 		int i=0;
 		while(i < keys.size() && keys.get(i).compareTo(key) <= 0){

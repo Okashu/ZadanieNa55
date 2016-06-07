@@ -21,12 +21,14 @@ public class BPlusTree<K extends Comparable<K>, V> {
 	
 	public int getHeight(){ return height; }
 	
-	private LeafNode<K,V> searchForNode(K key, miTree.PageManager pageManager){
-		Node<K,V> node = pageManager.getNodeFromPage(root, level)
+	private LeafNode<K,V> searchForNode(K key){
+		Node<K,V> node = pageManager.getNodeFromPage(root, height);
+		int currentLevel = height;
 		while (node instanceof InnerNode){
-			node = node.getChild(node.getKeyLocation(key), pageManager);
+			InnerNode innerNode = (InnerNode)node;
+			node = innerNode.getChild(node.getKeyLocation(key), --currentLevel, pageManager);
 		}
-		return node;
+		return (LeafNode<K, V>)node;
 	}
 	
 	private Node<K,V> find(K key){
