@@ -73,7 +73,7 @@ public class MemoryPage<K extends Comparable<K>, V> {
 
 	}
 
-	private int serializationLength(Object obj) throws IOException {
+	protected int serializationLength(Object obj) throws IOException {
 		// zeby poznac dlugosc serializacji
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		ObjectOutputStream os = new ObjectOutputStream(out);
@@ -95,48 +95,6 @@ public class MemoryPage<K extends Comparable<K>, V> {
 			out.write(buf);
 		}
 
-	}
-	
-	public void writeValue(V value){
-		File file = new File(fileName);
-		try{
-			if(serializationLength(value) > pageSize){
-				System.out.println("ERROR: not enough memory");
-			}
-			FileOutputStream out = new FileOutputStream(file);
-			ObjectOutputStream writer = new ObjectOutputStream(out);
-			writer.writeObject(value);
-		}
-		catch(FileNotFoundException e){
-			System.out.println("ERROR: no such file: " + fileName);
-		}
-		catch(IOException e){
-			e.printStackTrace();
-		}
-
-	}
-	public V readValue(){
-		File file = new File(fileName);
-		try{
-			FileInputStream in = new FileInputStream(file);
-			
-			ObjectInputStream reader = new ObjectInputStream(in);
-			
-			V value = (V)reader.readObject();
-			return value;
-		}
-		catch(FileNotFoundException e){
-			System.out.println("ERROR: no such file + " + fileName);
-			return null;
-		}
-		catch(IOException e){
-			e.printStackTrace();
-			return null;
-		}
-		catch(ClassNotFoundException e){
-			e.printStackTrace();
-			return null;
-		}
 	}
 	
 	public miTreePrototype.Node<K, V> read(int offset) {
