@@ -17,7 +17,7 @@ public class InnerNode<K extends Comparable<K>, V> extends Node<K, V> {
 	}
 	
 	public Node<K, V> getChild(int index, int myLevel, miTree.PageManager pageManager){
-		return pageManager.getNodeFromPage(index, myLevel);
+		return pageManager.getNodeFromPage(pageIDs.get(index), myLevel - 1);
 	}
 	
 	public void setChild(int index, int pageNumber){ //pageNumber
