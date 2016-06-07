@@ -11,7 +11,8 @@ public class LeafNode<K extends Comparable<K>, V> extends Node<K, V> {
 	}
 	
 	public V getValue(int index, miTree.PageManager<K, V> pageManager){
-		return (V)(pageManager.getPage(index).readValue());
+		miTree.ValuePage<K, V> valuePage = (miTree.ValuePage<K, V>)(pageManager.getPage(index));
+		return (V)(valuePage.readValue());
 	}
 	
 	// zwraca dokladna lokalizacje klucza, -1 gdy liść go nie posiada
