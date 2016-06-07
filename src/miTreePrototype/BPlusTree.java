@@ -47,7 +47,7 @@ public class BPlusTree<K extends Comparable<K>, V> {
 	
 	public void insert(K key, V value){
 		int newPageNumber = pageManager.allocateNewPage();
-		Split<K,V> split = root.insert(key, value, newPageNumber, pageManager, height);
+		Split<K,V> split = pageManager.getNodeFromPage(root,height).insert(key, value, newPageNumber, pageManager, height);
 		if (split != null){
 			root = new InnerNode<K,V>(ORDER);
 			root.keys.add(split.key);
