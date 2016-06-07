@@ -16,10 +16,19 @@ public class InnerNode<K extends Comparable<K>, V> extends Node<K, V> {
 	public boolean canLendAKey(){
 		return keys.size() > Math.ceil((double)(ORDER+1)/2-1);
 	}
+	
+	public Node<K, V> getChild(int index){
+		//tu bedzie trzeba dac getNodeFromPage
+		return children.get(index);
+	}
+	
+	public void setChild(int index, Node<K, V> node){ //pageNumber
+		children.set(index, node);
+	}
 
 	public Split<K, V> insert(K key, V value) {
 		int i = getKeyLocation(key);
-		Split<K,V> split = children.get(i).insert(key, value);
+		Split<K,V> split = getChild(i).insert(key, value);
 		
 		if (split != null){
 			int j = getKeyLocation(split.key);
@@ -51,7 +60,7 @@ public class InnerNode<K extends Comparable<K>, V> extends Node<K, V> {
 	public void dump(String prefix) {
 		System.out.println(prefix + "Inner Node");
 		for(int i=0; i<children.size(); i++){
-			children.get(i).dump(prefix + " ");
+			getChild(i).dump(prefix + " ");
 			if(i<keys.size()){
 				System.out.println(prefix + "+Key: " + keys.get(i));
 			}
@@ -61,8 +70,8 @@ public class InnerNode<K extends Comparable<K>, V> extends Node<K, V> {
 	// zwraca lewego brata podanego dziecka
 	public Node<K,V> getChildsLeftSibling(Node<K,V> child){
 		for(int i=1; i < children.size(); i++){
-			if (children.get(i) == child){
-				return children.get(i-1);
+			if (getChild(i) == child){
+				return getChild(i-1);
 			}
 		}
 		return null;
@@ -71,8 +80,8 @@ public class InnerNode<K extends Comparable<K>, V> extends Node<K, V> {
 	// zwraca prawego brata podanego dziecka
 	public Node<K,V> getChildsRightSibling(Node<K,V> child){
 		for(int i=0; i < children.size()-1; i++){
-			if (children.get(i) == child){
-				return children.get(i+1);
+			if (getChild(i) == child){
+				return getChild(i+1);
 			}
 		}
 		return null;
@@ -80,7 +89,7 @@ public class InnerNode<K extends Comparable<K>, V> extends Node<K, V> {
 
 	public boolean remove(K key, InnerNode<K,V> parent) {
 		int i = getKeyLocation(key);
-		boolean changedKeysSize = children.get(i).remove(key, this);
+		boolean changedKeysSize = getChild(i).remove(key, this);
 
 		if (changedKeysSize){
 			// syn zmienil liczbe kluczy rodzica
@@ -109,11 +118,11 @@ public class InnerNode<K extends Comparable<K>, V> extends Node<K, V> {
 	
 	// zwraca klucz oddzielajacy dwoch braci
 	public K getChildSplitKey(Node<K,V> child, boolean leftSibling){
-		if(!leftSibling && children.get(0) == child){
+		if(!leftSibling && getChild(0) == child){
 			return keys.get(0);
 		}
 		for(int i=1; i < children.size(); i++){
-			if (children.get(i) == child){
+			if (getChild(i) == child){
 				if(leftSibling){
 					return keys.get(i-1);
 				} else {
@@ -126,7 +135,7 @@ public class InnerNode<K extends Comparable<K>, V> extends Node<K, V> {
 	
 	// zmienia klucz oddzielajacy dwoch braci
 	public K setChildSplitKey(Node<K,V> child, boolean leftSibling, K key){
-		if(!leftSibling && children.get(0) == child){
+		if(!leftSibling && getChild(0) == child){
 			keys.set(0, key);
 		}
 		for(int i=1; i < children.size(); i++){
@@ -148,7 +157,7 @@ public class InnerNode<K extends Comparable<K>, V> extends Node<K, V> {
 			children.remove(1);
 		}
 		for(int i=1; i < children.size(); i++){
-			if (children.get(i) == child){
+			if (getChild(i) == child){
 				if(leftSibling){
 					keys.remove(i-1);
 					children.remove(i-1);
@@ -181,7 +190,7 @@ public class InnerNode<K extends Comparable<K>, V> extends Node<K, V> {
 			// pozycza z lewej
 			// w tym celu bierze takze klucz z rodzica, zas klucz z brata przechodzi na rodzica
 			keys.add(0, splitKey);
-			children.add(0,((InnerNode<K,V>)lender).children.get(lenderIndex + 1));
+			children.add(0,((InnerNode<K,V>)lender).getChild(lenderIndex + 1));
 			pushedKey = lender.keys.get(lenderIndex);
 			
 			lender.keys.remove(lenderIndex);
@@ -190,7 +199,7 @@ public class InnerNode<K extends Comparable<K>, V> extends Node<K, V> {
 			// pozycza z prawej
 			// w tym celu bierze takze klucz z rodzica, zas klucz z brata przechodzi na rodzica
 			keys.add(splitKey);
-			children.add(((InnerNode<K,V>)lender).children.get(lenderIndex));
+			children.add(((InnerNode<K,V>)lender).getChild(lenderIndex));
 			pushedKey = lender.keys.get(lenderIndex);
 			
 			lender.keys.remove(lenderIndex);

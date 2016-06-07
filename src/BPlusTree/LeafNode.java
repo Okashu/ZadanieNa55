@@ -11,6 +11,10 @@ public class LeafNode<K extends Comparable<K>, V> extends Node<K, V> {
 		values = new ArrayList<V>(ORDER);
 	}
 	
+	public V getValue(int index){
+		return values.get(index); //tu bedzie czytanie z valuePage
+	}
+	
 	// zwraca dokladna lokalizacje klucza, -1 gdy liść go nie posiada
 	public int getExactKeyLocation(K key){
 		int i = getKeyLocation(key);
@@ -54,7 +58,7 @@ public class LeafNode<K extends Comparable<K>, V> extends Node<K, V> {
 	public void dump(String prefix) {
 		System.out.println(prefix + "Leaf Node ");
 		for(int i=0; i<keys.size(); i++){
-			System.out.println(prefix + values.get(i).toString());
+			System.out.println(prefix + getValue(i).toString());
 		}
 	}
 
