@@ -3,7 +3,7 @@ package miTreePrototype;
 
 public class BPlusTree<K extends Comparable<K>, V> {
 	
-	private Node<K,V> root;
+	private int root;
 	
 	private final int ORDER;
 	private int height;
@@ -12,22 +12,25 @@ public class BPlusTree<K extends Comparable<K>, V> {
 	public BPlusTree(int order, int pageSize) {
 		ORDER = order;
 		pageManager = new miTree.PageManager<K, V> (pageSize);
-		root = new LeafNode<K,V>(ORDER);
+		pageManager.allocateNewPage();
+		LeafNode<K, V> rootNode = new LeafNode<K, V>(ORDER);
+		pageManager.writeNodeToPage(rootNode, 0, 1);
+		root = 0;
 		height = 1;
 	}
 	
 	public int getHeight(){ return height; }
 	
-	private Node<K,V> searchForNode(K key){
-		Node<K,V> node = root;
-		while (node.isLeaf == false){
+	private LeafNode<K,V> searchForNode(K key, miTree.PageManager pageManager){
+		Node<K,V> node = pageManager.getNodeFromPage(root, level)
+		while (node instanceof InnerNode){
 			node = node.getChild(node.getKeyLocation(key), pageManager);
 		}
 		return node;
 	}
 	
 	private Node<K,V> find(K key){
-		Node<K,V> leaf = searchForNode(key);
+		LeafNode<K,V> leaf = searchForNode(key);
 		if(leaf != null){
 			int loc = leaf.getExactKeyLocation(key);
 			if (loc >= 0){
@@ -41,19 +44,18 @@ public class BPlusTree<K extends Comparable<K>, V> {
 	}
 	
 	public void insert(K key, V value){
-		Integer newPageNumber = pageManager.allocateNewPage();
-		Split<K,V> split = root.insert(key, value, newPageNumber, pageManager, new Integer(1));
+		int newPageNumber = pageManager.allocateNewPage();
+		Split<K,V> split = root.insert(key, value, newPageNumber, pageManager, height);
 		if (split != null){
 			root = new InnerNode<K,V>(ORDER);
 			root.keys.add(split.key);
 			((InnerNode<K,V>)root).children.add(split.left);
 			((InnerNode<K,V>)root).children.add(split.right);
-			height++;
 		}
 	}
 	
 	public V retrieve(K key){
-		Node<K,V> leaf = searchForNode(key);
+		LeafNode<K,V> leaf = searchForNode(key);
 		if(leaf != null){
 			int loc = leaf.getExactKeyLocation(key);
 			if (loc >= 0){

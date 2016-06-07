@@ -1,23 +1,29 @@
-package miTreePrototype;
+package BPlusTree;
 
 import java.util.*;
 
 public class LeafNode<K extends Comparable<K>, V> extends Node<K, V> {
 	
-	public List<V> values;
 
 	public LeafNode(int order) {
 		super(order);
-		values = new ArrayList<V>(ORDER);
 	}
 	
 	public V getValue(int index){
 		return values.get(index); //tu bedzie czytanie z valuePage
 	}
 	
+	// zwraca dokladna lokalizacje klucza, -1 gdy liść go nie posiada
+	public int getExactKeyLocation(K key){
+		int i = getKeyLocation(key);
+		if (i>0 && i<=keys.size() && keys.get(i-1).equals(key)){
+			return i-1;
+		} else {
+			return -1;
+		}
+	}
 
-
-	public Split<K, V> insert(K key, V value) {
+	public Split<K, V> insert(K key, V value, int level) {
 		if(keys.size() == 0){
 			keys.add(key);
 			values.add(value);

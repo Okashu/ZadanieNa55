@@ -10,7 +10,6 @@ public abstract class Node<K extends Comparable<K>, V> {
 	protected final int ORDER;
 	public List<K> keys;
 	public List<Integer> pageIDs;
-	public boolean isLeaf;
 	private int level;
 	
 	Node(int order){
@@ -20,13 +19,6 @@ public abstract class Node<K extends Comparable<K>, V> {
 	}
 	
 	
-	public Node<K, V> getChild(int index, PageManager pageManager){
-		return pageManager.getNodeFromPage(pageIDs.get(index), level);
-	}
-	
-	public void setChild(int index, Integer pageNumber){ //pageNumber
-		pageIDs.set(index, pageNumber);
-	}
 	
 	public V getValue(int index, PageManager pageManager){
 	//TODO odczyt wartoœci	
@@ -41,14 +33,6 @@ public abstract class Node<K extends Comparable<K>, V> {
 		return i;
 	}
 	
-	public int getExactKeyLocation(K key){
-		int i = getKeyLocation(key);
-		if (i>0 && i<=keys.size() && keys.get(i-1).equals(key)){
-			return i-1;
-		} else {
-			return -1;
-		}
-	}
 	
 	public boolean needsToBeSplit(){
 		return keys.size() > ORDER;
@@ -105,108 +89,9 @@ public abstract class Node<K extends Comparable<K>, V> {
 		return false;
 	}
 	
-	public Split<K, V> insert(K key, V value, Integer pageID, PageManager<K, V> pageManager, Integer currentLevel) {
-		if(!isLeaf){			
-			int i = getKeyLocation(key);
-			Split<K,V> split = getChild(i, pageManager).insert(key, value, pageID, pageManager, currentLevel);
-			pageIDs.set(i, pageID);
-			pageManager.writeNodeToPage(this, pageID, currentLevel.intValue());
-			currentLevel += 1;
-			
-			if (split != null){
-				int j = getKeyLocation(split.key);
-				keys.add(j, split.key);
-				children.add(j+1, split.right);
-				
-				if(needsToBeSplit()){
-					return this.split();
-				}
-			}
-			return null;
-		}
-		else{
-			if(keys.size() == 0){
-				keys.add(key);
-				int newPage = pageManager.allocateNewPage();
-				pageManager.getPage(newPage).writeValue(value);
-				pageIDs.add(newPage);
-				pageManager.writeNodeToPage(this, pageID.intValue(), currentLevel.intValue());
-				currentLevel += 1;
-				return null;
-			} else {
-				int i = getKeyLocation(key);
-				keys.add(i, key);
-				int newPage = pageManager.allocateNewPage();
-				pageManager.getPage(newPage).writeValue(value);
-				pageIDs.add(i, newPage);
-				pageManager.writeNodeToPage(this, pageID.intValue(), currentLevel.intValue());
-				
-				if(needsToBeSplit()){
-					return this.split();
-				} else {
-					return null;
-				}
-			}
-		}
-	}
-	
-	public Split<K, V> split() {
-		int mid = keys.size()/2;
-		Node<K,V> rightSibling = new InnerNode<K,V>(ORDER);
-		
-		// srodkowy przechodzi calkowicie na wyzszy node
-		K middleKey = this.keys.get(mid);
-		
-		rightSibling.keys = new ArrayList<K>(keys.subList(mid + 1, keys.size()));
-		rightSibling.pageIDs = new ArrayList<Integer>(pageIDs.subList(mid + 1, pageIDs.size()));
-		this.keys = new ArrayList<K>(keys.subList(0, mid));
-		this.pageIDs =  new ArrayList<Integer>(pageIDs.subList(0, mid));
-		
-		return new Split<K,V>(middleKey, this, rightSibling);
-	}
-	
-	
-	public boolean remove(K key, Node<K,V> parent, int pageID){	//przekazuje rodzica, aby miec dostep do braci
-		if(isLeaf){
-			int i = getExactKeyLocation(key);
-			if (i < 0){
-				return false;
-			}
-			keys.remove(i);
-			pageIDs.remove(i);
-			if(this.needsToBeMerged()){
-				return this.handleMerger(parent);
-			} else {
-				return false;
-			}
-		}
-		else{
-			int i = getKeyLocation(key);
-			boolean changedKeysSize = getChild(i).remove(key, this, pageID);
-
-			if (changedKeysSize){
-				// syn zmienil liczbe kluczy rodzica
-				
-				if(parent == null){ // jesli to root
-					if(keys.size() == 0){
-						// usunieto wszystkie klucze, wiec zostalo sie jedno dziecko
-						// dziecko staje sie nowym root'em
-						return true;
-					} else {
-						return false;
-					}
-				} else {
-					// poniewaz usunieto klucz, kluczy moze byc za malo
-					if(this.needsToBeMerged()){
-						return handleMerger(parent);
-					} else {
-						return false;
-					}
-				}
-			}
-			return false;
-		}
-	}
+	public abstract Split<K, V> insert(K key, V value, Integer pageID, PageManager<K, V> pageManager, Integer currentLevel);	
+	public abstract Split<K, V> split();
+	public abstract boolean remove(K key, int parentPageID); //przekazuje rodzica, aby miec dostep do braci
 	abstract protected void mergeWith(Node<K, V> mergingNode, boolean mergeToLeft, K splitKey);
 	abstract protected K borrowKeys(Node<K, V> lender, boolean borrowFromLeft, K splitKey);
 	abstract public void dump(String prefix);

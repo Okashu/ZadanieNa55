@@ -1,10 +1,9 @@
-package miTreePrototype;
+package BPlusTree;
 
 import java.util.*;
 
 public class InnerNode<K extends Comparable<K>, V> extends Node<K, V> {
 
-	public List<Node<K,V>> children;
 	
 	public InnerNode(int order) {
 		super(order);
@@ -26,9 +25,9 @@ public class InnerNode<K extends Comparable<K>, V> extends Node<K, V> {
 		children.set(index, node);
 	}
 
-	public Split<K, V> insert(K key, V value) {
+	public Split<K, V> insert(K key, V value, int level) {
 		int i = getKeyLocation(key);
-		Split<K,V> split = getChild(i).insert(key, value);
+		Split<K,V> split = getChild(i).insert(key, value, level - 1);
 		
 		if (split != null){
 			int j = getKeyLocation(split.key);
