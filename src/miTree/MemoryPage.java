@@ -26,7 +26,7 @@ public class MemoryPage<K extends Comparable<K>, V> {
 		}
 	}
 
-	public void write(Node<K, V> node, int lvl, int height) {
+	public void write(miTreePrototype.Node<K, V> node, int lvl, int height) {
 		File file = new File(fileName);
 		File temp = new File("temp.BIN");
 		int beginning = 0;	//liczba bitów przed node'em do wpisania
@@ -46,9 +46,10 @@ public class MemoryPage<K extends Comparable<K>, V> {
 			nodeLength = write(out, node);	// zapisywanie noda
 			if (nodeSize >= nodeLength) { 	//dopychanie 
 				write(out, nodeSize - nodeLength);
-			} else
-				System.out.println("ERROR, not enough memory");
-			// zrobiæ coœ bardziej zauwazalnego, jakieœ exception
+			} else{				
+				System.out.println("ERROR: not enough memory");
+				// zrobiæ coœ bardziej zauwazalnego, jakieœ exception
+			}
 			
 			in.skip(nodeSize);
 			if (lvl != 1) // nie liœæ, kopiowanie reszty
@@ -80,7 +81,7 @@ public class MemoryPage<K extends Comparable<K>, V> {
 		return out.toByteArray().length;
 	}
 
-	private int write(FileOutputStream out, Node<K, V> node) throws IOException {
+	private int write(FileOutputStream out, miTreePrototype.Node<K, V> node) throws IOException {
 		int nodeLength = 0;
 		ObjectOutputStream writer = new ObjectOutputStream(out);
 		nodeLength = serializationLength(node);
@@ -95,14 +96,56 @@ public class MemoryPage<K extends Comparable<K>, V> {
 		}
 
 	}
+	
+	public void writeValue(V value){
+		File file = new File(fileName);
+		try{
+			if(serializationLength(value) > pageSize){
+				System.out.println("ERROR: not enough memory");
+			}
+			FileOutputStream out = new FileOutputStream(file);
+			ObjectOutputStream writer = new ObjectOutputStream(out);
+			writer.writeObject(value);
+		}
+		catch(FileNotFoundException e){
+			System.out.println("ERROR: no such file: " + fileName);
+		}
+		catch(IOException e){
+			e.printStackTrace();
+		}
 
-	public Node<K, V> read(int offset) {
-		Node<K, V> node = null;
+	}
+	public V readValue(){
+		File file = new File(fileName);
+		try{
+			FileInputStream in = new FileInputStream(file);
+			
+			ObjectInputStream reader = new ObjectInputStream(in);
+			
+			V value = (V)reader.readObject();
+			return value;
+		}
+		catch(FileNotFoundException e){
+			System.out.println("ERROR: no such file + " + fileName);
+			return null;
+		}
+		catch(IOException e){
+			e.printStackTrace();
+			return null;
+		}
+		catch(ClassNotFoundException e){
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	public miTreePrototype.Node<K, V> read(int offset) {
+		miTreePrototype.Node<K, V> node = null;
 		try {
 			FileInputStream in = new FileInputStream(fileName);
 			ObjectInputStream reader = new ObjectInputStream(in);
 			reader.skip(offset);
-			node = (Node<K, V>)reader.readObject();
+			node = (miTreePrototype.Node<K, V>)reader.readObject();
 			in.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

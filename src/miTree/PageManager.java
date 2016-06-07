@@ -17,16 +17,21 @@ public class PageManager<K extends Comparable<K>, V> {
 	public PageManager(int pageSize){
 		this.pageSize = pageSize;
 		pageList = new ArrayList<MemoryPage<K, V>>();
+		treeHeight = 1;
 	}
 	
-	public Node<K, V> getNodeFromPage(int pageID, int level){
+	public void setTreeHeight(int height){
+		treeHeight = height;
+	}
+	
+	public miTreePrototype.Node<K, V> getNodeFromPage(int pageID, int level){
 		int size = (int)(pageSize / Math.pow(2, level));
 		int offset = size;
 		if(level == treeHeight){
 			size = size * 2;
 			offset = 0;
 		}
-		Node<K, V> retrievedNode = pageList.get(pageID).read(offset);
+		miTreePrototype.Node<K, V> retrievedNode = pageList.get(pageID).read(offset);
 		if(retrievedNode != null){
 			return retrievedNode;
 		}
@@ -36,8 +41,11 @@ public class PageManager<K extends Comparable<K>, V> {
 		}
 		
 	}
+	public MemoryPage getPage(int index){
+		return pageList.get(index);
+	}
 	
-	public void writeNodeToPage(Node<K, V> node, int pageID, int level){
+	public void writeNodeToPage(miTreePrototype.Node<K, V> node, int pageID, int level){
 		pageList.get(pageID).write(node, level, treeHeight);
 	}
 	
