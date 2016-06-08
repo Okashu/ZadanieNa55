@@ -106,7 +106,7 @@ public abstract class Node<K extends Comparable<K>, V> implements java.io.Serial
 		return false;
 	}
 	
-	public abstract Split<K, V> insert(K key, V value, Integer pageID, PageManager<K, V> pageManager, Integer currentLevel);	
+	public abstract Split<K, V> insert(K key, V value, int pageID, PageManager<K, V> pageManager, int currentLevel);	
 	public abstract Split<K, V> split();
 	public abstract boolean remove(K key, InnerNode<K, V> parent, int childIndex, int pageID, PageManager<K, V> pageManager, int currentLevel); //przekazuje rodzica, aby miec dostep do braci
 	abstract protected void mergeWith(Node<K, V> mergingNode, boolean mergeToLeft, K splitKey);
