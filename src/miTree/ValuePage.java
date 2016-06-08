@@ -10,9 +10,6 @@ import java.io.ObjectOutputStream;
 
 public class ValuePage<K extends Comparable<K>, V> extends MemoryPage<K, V> {
 	
-	String fileName;
-	int pageSize;
-	
 	public ValuePage(int pageID, int pageSize){
 		super(pageID, pageSize);
 	}

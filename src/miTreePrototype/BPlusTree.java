@@ -29,7 +29,8 @@ public class BPlusTree<K extends Comparable<K>, V> {
 		int currentLevel = height;
 		while (node instanceof InnerNode){
 			InnerNode<K, V> innerNode = (InnerNode)node;
-			node = innerNode.getChild(node.getKeyLocation(key), --currentLevel, pageManager);
+			node = innerNode.getChild(node.getKeyLocation(key), currentLevel, pageManager);
+			currentLevel--;
 		}
 		return (LeafNode<K, V>)node;
 	}
