@@ -10,8 +10,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 public class MemoryPage<K extends Comparable<K>, V> {
-	private int pageSize;
-	private String fileName;
+	protected int pageSize;
+	protected String fileName;
 
 	public MemoryPage(int pageID, int pageSize) {
 		this.pageSize = pageSize;
@@ -110,13 +110,18 @@ public class MemoryPage<K extends Comparable<K>, V> {
 		try {
 			FileInputStream in = new FileInputStream(fileName);
 			ObjectInputStream reader = new ObjectInputStream(in);
-			reader.skip(offset);
+			System.out.println(offset);
+			in.skip(offset);
+			//reader.skipBytes(offset);
 			node = (miTreePrototype.Node<K, V>)reader.readObject();
-			System.out.println(node.pageIDs);
+			//System.out.println(node.toString());
+			//System.out.println(node.getClass().toString());
+			//System.out.println(node.pageIDs);
 			in.close();
 		} catch (IOException e) {
-			System.out.println("IOException w read");
+			System.out.println("IOException w read" + offset);
 			e.printStackTrace();
+			System.exit(0);
 		} catch (ClassNotFoundException e) {
 			System.out.println("ClassNotFoundException w read");
 			e.printStackTrace();

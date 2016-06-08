@@ -5,7 +5,7 @@ import java.util.*;
 
 import miTree.PageManager;
 
-public abstract class Node<K extends Comparable<K>, V> {
+public abstract class Node<K extends Comparable<K>, V> implements java.io.Serializable {
 
 	protected int ORDER;
 	public List<K> keys;

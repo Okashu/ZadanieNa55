@@ -3,7 +3,7 @@ package miTreePrototype;
 
 public class Main {
 
-	public static final int PAGESIZE = 1024;
+	public static final int PAGESIZE = 4096;
 	
 	public static void main(String[] args){
 		
@@ -14,6 +14,7 @@ public class Main {
 				tree2.insert(i, i);
 			}
 		}
+		tree2.dump();
 
 		for(int i=0; i<=200; i++){
 			System.out.println(i + ": " + tree2.retrieve(i));
