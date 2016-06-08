@@ -22,7 +22,7 @@ public class MemoryPage<K extends Comparable<K>, V> {
 				directory.mkdir();
 			}
 			catch(SecurityException e){
-				System.out.println("Brak dostêpu do zapisu/odczytu plików, program nie mo¿e dzia³aæ.");
+				System.out.println("ERROR: No file write access!");
 				e.printStackTrace();
 				System.exit(-1);
 			}
@@ -34,7 +34,7 @@ public class MemoryPage<K extends Comparable<K>, V> {
 			write(out, pageSize); // tworzy plik i zape³nia niczym
 			out.close();
 		} catch (IOException e) {
-			System.out.println("B³¹d przy tworzeniu strony pamiêci!");
+			System.out.println("ERROR: IOException while creating memory page!");
 			e.printStackTrace();
 			System.exit(-1);
 		}
