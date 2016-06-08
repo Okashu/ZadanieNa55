@@ -109,9 +109,9 @@ public class MemoryPage<K extends Comparable<K>, V> {
 		miTreePrototype.Node<K, V> node = null;
 		try {
 			FileInputStream in = new FileInputStream(fileName);
-			ObjectInputStream reader = new ObjectInputStream(in);
-			System.out.println(offset);
 			in.skip(offset);
+			ObjectInputStream reader = new ObjectInputStream(in);
+			
 			//reader.skipBytes(offset);
 			node = (miTreePrototype.Node<K, V>)reader.readObject();
 			//System.out.println(node.toString());

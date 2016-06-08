@@ -39,7 +39,7 @@ public class LeafNode<K extends Comparable<K>, V> extends Node<K, V> implements 
 			keys.add(i, key);
 			int newPageNumber=pageManager.allocateNewValuePage();
 			((miTree.ValuePage<K,V>) pageManager.getPage(newPageNumber)).writeValue(value);
-			pageIDs.add(newPageNumber);
+			pageIDs.add(i, newPageNumber);
 				
 			pageManager.writeNodeToPage(this, pageID, currentLevel);
 			

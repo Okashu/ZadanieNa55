@@ -8,7 +8,7 @@ public class Main {
 	public static void main(String[] args){
 		
 	
-		BPlusTree<Integer, Integer> tree2 = new BPlusTree<Integer, Integer>(3, PAGESIZE);
+		BPlusTree<Integer, Integer> tree2 = new BPlusTree<Integer, Integer>(4, PAGESIZE);
 		for(int i=200; i>=0; i--){
 			if (i%2 == 0){
 				tree2.insert(i, i);
