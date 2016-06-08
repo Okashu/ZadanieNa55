@@ -15,21 +15,35 @@ public class MemoryPage<K extends Comparable<K>, V> {
 
 	public MemoryPage(int pageID, int pageSize) {
 		this.pageSize = pageSize;
-		fileName = Integer.toString(pageID) + ".BIN";
+		
+		File directory = new File("memoryPages");
+		if(! directory.exists()){
+			try{
+				directory.mkdir();
+			}
+			catch(SecurityException e){
+				System.out.println("ERROR: No file write access!");
+				e.printStackTrace();
+				System.exit(-1);
+			}
+		}
+		
+		fileName = "memoryPages/" + Integer.toString(pageID) + ".BIN";
 		try {
 			FileOutputStream out = new FileOutputStream(fileName);
 			write(out, pageSize); // tworzy plik i zape³nia niczym
 			out.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			System.out.println("ERROR: IOException while creating memory page!");
 			e.printStackTrace();
+			System.exit(-1);
 		}
 	}
 
 	public void write(miTreePrototype.Node<K, V> node, int lvl, int height) {
 		if(this instanceof ValuePage){
 			System.out.println("ERROR: attempt to write node to value page.");
-			return;
+			System.exit(-1);
 		}
 		File file = new File(fileName);
 		File temp = new File("temp.BIN");
@@ -51,8 +65,9 @@ public class MemoryPage<K extends Comparable<K>, V> {
 			if (nodeSize >= nodeLength) { 	//dopychanie 
 				write(out, nodeSize - nodeLength);
 			} else{				
-				System.out.println("ERROR: not enough memory");
-				// zrobiæ coœ bardziej zauwazalnego, jakieœ exception
+				in.close();
+				out.close();
+				throw new OutOfMemoryError();
 			}
 			
 			in.skip(nodeSize);
@@ -68,11 +83,17 @@ public class MemoryPage<K extends Comparable<K>, V> {
 			temp.renameTo(file);
 
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
+			System.out.println("ERROR: File not found: " + fileName);
 			e.printStackTrace();
+			System.exit(-1);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			System.out.println("ERROR: IOException while writing node to file");
 			e.printStackTrace();
+			System.exit(-1);
+		} catch(OutOfMemoryError e){
+			System.out.println("ERROR: not enough memory");
+			e.printStackTrace();
+			System.exit(-1);
 		}
 
 	}
@@ -103,9 +124,7 @@ public class MemoryPage<K extends Comparable<K>, V> {
 	
 	public miTreePrototype.Node<K, V> read(int offset) {
 		if(this instanceof ValuePage){
-			System.out.println("ERROR: Attempting to read node from value page");
-			int a = 1/0;
-			return null;
+			throw new IllegalArgumentException();
 		}
 		miTreePrototype.Node<K, V> node = null;
 		try {
@@ -120,12 +139,17 @@ public class MemoryPage<K extends Comparable<K>, V> {
 			//System.out.println(node.pageIDs);
 			in.close();
 		} catch (IOException e) {
-			System.out.println("IOException w read" + offset + " " + fileName);
+			System.out.println("ERROR: IOException while reading offset: " + offset + " in file " + fileName);
 			e.printStackTrace();
-			System.exit(0);
+			System.exit(-1);
 		} catch (ClassNotFoundException e) {
-			System.out.println("ClassNotFoundException w read");
+			System.out.println("ERROR: ClassNotFoundException while reading offset: " + offset);
 			e.printStackTrace();
+			System.exit(-1);
+		} catch(IllegalArgumentException e){
+			System.out.println("ERROR: Tried to read node from a value page!");
+			e.printStackTrace();
+			System.exit(-1);
 		}
 		return node;
 	}
