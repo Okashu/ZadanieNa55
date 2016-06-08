@@ -112,12 +112,13 @@ public class MemoryPage<K extends Comparable<K>, V> {
 			ObjectInputStream reader = new ObjectInputStream(in);
 			reader.skip(offset);
 			node = (miTreePrototype.Node<K, V>)reader.readObject();
+			System.out.println(node.pageIDs);
 			in.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			System.out.println("IOException w read");
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
+			System.out.println("ClassNotFoundException w read");
 			e.printStackTrace();
 		}
 		return node;

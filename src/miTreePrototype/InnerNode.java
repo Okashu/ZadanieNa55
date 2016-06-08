@@ -1,8 +1,9 @@
 package miTreePrototype;
 
-import java.util.*;
+import java.io.Serializable;
+import java.util.ArrayList;
 
-public class InnerNode<K extends Comparable<K>, V> extends Node<K, V> {
+public class InnerNode<K extends Comparable<K>, V> extends Node<K, V> implements Serializable {
 
 	
 	public InnerNode(int order) {
@@ -40,7 +41,7 @@ public class InnerNode<K extends Comparable<K>, V> extends Node<K, V> {
 			if(needsToBeSplit()){
 				return this.split();
 			}else{
-				pageManager.writeNodeToPage(this, pageID, currentLevel
+				pageManager.writeNodeToPage(this, pageID, currentLevel);
 			}
 		}else{
 			pageManager.writeNodeToPage(this, pageID, currentLevel);
@@ -58,7 +59,7 @@ public class InnerNode<K extends Comparable<K>, V> extends Node<K, V> {
 		rightSibling.keys = new ArrayList<K>(keys.subList(mid + 1, keys.size()));
 		rightSibling.pageIDs = new ArrayList<Integer>(pageIDs.subList(mid + 1, pageIDs.size()));
 		this.keys = new ArrayList<K>(keys.subList(0, mid));
-		this.pageIDs =  new ArrayList<int>(pageIDs.subList(0, mid + 1));
+		this.pageIDs =  new ArrayList<Integer>(pageIDs.subList(0, mid + 1));
 		
 		return new Split<K,V>(middleKey, this, rightSibling);
 	}
@@ -74,7 +75,7 @@ public class InnerNode<K extends Comparable<K>, V> extends Node<K, V> {
 	}
 	
 	// zwraca lewego brata podanego dziecka
-	public Node<K,V> getChildsLeftSibling(Node<K,V> child){
+	/*public Node<K,V> getChildsLeftSibling(Node<K,V> child){
 		for(int i=1; i < children.size(); i++){
 			if (getChild(i) == child){
 				return getChild(i-1);

@@ -1,10 +1,10 @@
 package miTreePrototype;
 
-import java.util.*;
+import java.io.Serializable;
+import java.util.ArrayList;
 
 
-public class LeafNode<K extends Comparable<K>, V> extends Node<K, V> {
-	
+public class LeafNode<K extends Comparable<K>, V> extends Node<K, V> implements Serializable {
 
 	public LeafNode(int order) {
 		super(order);
@@ -31,7 +31,6 @@ public class LeafNode<K extends Comparable<K>, V> extends Node<K, V> {
 			int newPageNumber=pageManager.allocateNewValuePage();
 			((miTree.ValuePage<K,V>) pageManager.getPage(newPageNumber)).writeValue(value);
 			pageIDs.add(newPageNumber);
-			//values.add(value);
 			pageManager.writeNodeToPage(this, pageID, currentLevel);
 			
 			return null;
@@ -41,8 +40,7 @@ public class LeafNode<K extends Comparable<K>, V> extends Node<K, V> {
 			int newPageNumber=pageManager.allocateNewValuePage();
 			((miTree.ValuePage<K,V>) pageManager.getPage(newPageNumber)).writeValue(value);
 			pageIDs.add(newPageNumber);
-			
-			//values.add(i, value);
+				
 			pageManager.writeNodeToPage(this, pageID, currentLevel);
 			
 			if(needsToBeSplit()){
@@ -72,7 +70,7 @@ public class LeafNode<K extends Comparable<K>, V> extends Node<K, V> {
 		}
 	}
 
-	public boolean remove(K key, InnerNode<K,V> parent) {
+/*	public boolean remove(K key, InnerNode<K,V> parent) {
 		int i = getExactKeyLocation(key);
 		if (i < 0){
 			return false;

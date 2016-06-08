@@ -7,9 +7,13 @@ import miTree.PageManager;
 
 public abstract class Node<K extends Comparable<K>, V> {
 
-	protected final int ORDER;
+	protected int ORDER;
 	public List<K> keys;
 	public List<Integer> pageIDs;
+	
+	public Node(){
+		ORDER = -1;
+	}
 	
 	Node(int order){
 		ORDER = order;
@@ -39,7 +43,7 @@ public abstract class Node<K extends Comparable<K>, V> {
 	}
 	
 	//zwraca true, jesli zmieniono ilosc kluczy rodzica
-	public boolean handleMerger(InnerNode<K,V> parent){
+	/*public boolean handleMerger(InnerNode<K,V> parent){
 		if (parent == null){
 			return false; //node jest rootem, wiec nie ma braci
 		}
@@ -79,13 +83,13 @@ public abstract class Node<K extends Comparable<K>, V> {
 			return true;
 		}
 		return false;
-	}
+	}*/
 	
 	public abstract Split<K, V> insert(K key, V value, Integer pageID, PageManager<K, V> pageManager, Integer currentLevel);	
 	public abstract Split<K, V> split();
-	public abstract boolean remove(K key, InnerNode<K, V> parent); //przekazuje rodzica, aby miec dostep do braci
-	abstract protected void mergeWith(Node<K, V> mergingNode, boolean mergeToLeft, K splitKey);
-	abstract protected K borrowKeys(Node<K, V> lender, boolean borrowFromLeft, K splitKey);
+//	public abstract boolean remove(K key, InnerNode<K, V> parent); //przekazuje rodzica, aby miec dostep do braci
+//	abstract protected void mergeWith(Node<K, V> mergingNode, boolean mergeToLeft, K splitKey);
+//	abstract protected K borrowKeys(Node<K, V> lender, boolean borrowFromLeft, K splitKey);
 	abstract public void dump(String prefix, int myLevel, miTree.PageManager<K, V> pageManager);
 
 	//abstract public void checkForErrors(boolean root); //DEBUG
