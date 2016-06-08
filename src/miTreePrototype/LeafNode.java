@@ -24,16 +24,26 @@ public class LeafNode<K extends Comparable<K>, V> extends Node<K, V> {
 			return -1;
 		}
 	}
-
-	public Split<K, V> insert(K key, V value, int level) {
+	public Split<K, V> insert(K key, V value, Integer pageID, miTree.PageManager<K, V> pageManager, Integer currentLevel){
+		
 		if(keys.size() == 0){
 			keys.add(key);
-			values.add(value);
+			int newPageNumber=pageManager.allocateNewValuePage();
+			((miTree.ValuePage<K,V>) pageManager.getPage(newPageNumber)).writeValue(value);
+			pageIDs.add(newPageNumber);
+			//values.add(value);
+			pageManager.writeNodeToPage(this, pageID, currentLevel);
+			
 			return null;
 		} else {
 			int i = getKeyLocation(key);
 			keys.add(i, key);
-			values.add(i, value);
+			int newPageNumber=pageManager.allocateNewValuePage();
+			((miTree.ValuePage<K,V>) pageManager.getPage(newPageNumber)).writeValue(value);
+			pageIDs.add(newPageNumber);
+			
+			//values.add(i, value);
+			pageManager.writeNodeToPage(this, pageID, currentLevel);
 			
 			if(needsToBeSplit()){
 				return this.split();
