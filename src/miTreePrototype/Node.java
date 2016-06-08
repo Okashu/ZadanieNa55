@@ -43,53 +43,75 @@ public abstract class Node<K extends Comparable<K>, V> implements java.io.Serial
 	}
 	
 	//zwraca true, jesli zmieniono ilosc kluczy rodzica
-	/*public boolean handleMerger(InnerNode<K,V> parent){
+	public boolean handleMerger(InnerNode<K,V> parent, int childIndex, int pageID, PageManager<K, V> pageManager, int currentLevel){
 		if (parent == null){
+			pageManager.writeNodeToPage(this, pageID, currentLevel);
 			return false; //node jest rootem, wiec nie ma braci
 		}
-		Node<K,V> leftSibling = parent.getChildsLeftSibling(this);
+		Node<K,V> leftSibling = parent.getChildsLeftSibling(childIndex, currentLevel, pageManager);
 		if (leftSibling != null && leftSibling.canLendAKey()){
 			//pozycz od lewego brata
-			K splitKey = parent.getChildSplitKey(this, true);
+			K splitKey = parent.getChildSplitKey(childIndex, true);
 			K pushedKey = borrowKeys(leftSibling, true, splitKey);
+			
+			pageManager.writeNodeToPage(this, pageID, currentLevel);
+			int temp = pageManager.allocateNewPage();
+			pageManager.writeNodeToPage(leftSibling, temp, currentLevel);
 			//zmiana kluczy w rodzicu
-			parent.setChildSplitKey(this, true, pushedKey);
+			parent.setChildSplitKey(childIndex, true, pushedKey);
+			parent.setChild(childIndex, pageID);
+			parent.setChild(childIndex-1, temp);
+			
 			return false;
 		}
-		Node<K,V> rightSibling = parent.getChildsRightSibling(this);
+		Node<K,V> rightSibling = parent.getChildsRightSibling(childIndex, currentLevel, pageManager);
 		if (rightSibling != null && rightSibling.canLendAKey()){
 			//pozycz od prawego brata
-			K splitKey = parent.getChildSplitKey(this, false);
+			K splitKey = parent.getChildSplitKey(childIndex, false);
 			K pushedKey = borrowKeys(rightSibling, false, splitKey);
+			
+			pageManager.writeNodeToPage(this, pageID, currentLevel);
+			int temp = pageManager.allocateNewPage();
+			pageManager.writeNodeToPage(rightSibling, temp, currentLevel);
 			//zmiana kluczy w rodzicu
-			parent.setChildSplitKey(this, false, pushedKey);
+			parent.setChildSplitKey(childIndex, false, pushedKey);
+			parent.setChild(childIndex, pageID);
+			parent.setChild(childIndex+1, temp);
 			return false;
 		}
 		//nie mozna pozyczyc klucza
 		//trzeba polaczyc braci
 		if (leftSibling != null){
 			//polacz z lewym
-			K splitKey = parent.getChildSplitKey(this, true);
+			K splitKey = parent.getChildSplitKey(childIndex, true);
 			this.mergeWith(leftSibling, true, splitKey);
+			
+			pageManager.writeNodeToPage(this, pageID, currentLevel);
 			//usuniecie kluczy w rodzicu
-			parent.removeChildSplitKey(this, true);
+			parent.removeChildSplitKey(childIndex, true);
+			parent.setChild(childIndex-1, pageID);
+			
 			return true;
 		} else if (rightSibling != null){
 			//polacz z prawym
-			K splitKey = parent.getChildSplitKey(this, false);
+			K splitKey = parent.getChildSplitKey(childIndex, false);
 			this.mergeWith(rightSibling, false, splitKey);
+			
+			pageManager.writeNodeToPage(this, pageID, currentLevel);
 			//usuniecie kluczy w rodzicu
-			parent.removeChildSplitKey(this, false);
+			parent.removeChildSplitKey(childIndex, false);
+			parent.setChild(childIndex, pageID);
+			
 			return true;
 		}
 		return false;
-	}*/
+	}
 	
 	public abstract Split<K, V> insert(K key, V value, Integer pageID, PageManager<K, V> pageManager, Integer currentLevel);	
 	public abstract Split<K, V> split();
-//	public abstract boolean remove(K key, InnerNode<K, V> parent); //przekazuje rodzica, aby miec dostep do braci
-//	abstract protected void mergeWith(Node<K, V> mergingNode, boolean mergeToLeft, K splitKey);
-//	abstract protected K borrowKeys(Node<K, V> lender, boolean borrowFromLeft, K splitKey);
+	public abstract boolean remove(K key, InnerNode<K, V> parent, int childIndex, int pageID, PageManager<K, V> pageManager, int currentLevel); //przekazuje rodzica, aby miec dostep do braci
+	abstract protected void mergeWith(Node<K, V> mergingNode, boolean mergeToLeft, K splitKey);
+	abstract protected K borrowKeys(Node<K, V> lender, boolean borrowFromLeft, K splitKey);
 	abstract public void dump(String prefix, int myLevel, miTree.PageManager<K, V> pageManager);
 
 	//abstract public void checkForErrors(boolean root); //DEBUG
