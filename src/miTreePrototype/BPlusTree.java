@@ -1,5 +1,6 @@
 package miTreePrototype;
 
+import BPlusTree.InnerNode;
 
 public class BPlusTree<K extends Comparable<K>, V> {
 	
@@ -57,11 +58,11 @@ public class BPlusTree<K extends Comparable<K>, V> {
 			int splitPageID = pageManager.allocateNewPage();
 			InnerNode<K, V> rootNode = new InnerNode<K,V>(ORDER);
 			rootNode.keys.add(split.key);
+			rootNode.pageIDs.add(newPageID);
+			rootNode.pageIDs.add(splitPageID);
 			pageManager.writeNodeToPage(split.left, newPageID, height - 1);
 			pageManager.writeNodeToPage(split.right, splitPageID, height - 1);
 			pageManager.writeNodeToPage(rootNode, newPageID, height);
-			rootNode.pageIDs.add(newPageID);
-			rootNode.pageIDs.add(splitPageID);
 		}
 	}
 	
@@ -83,8 +84,7 @@ public class BPlusTree<K extends Comparable<K>, V> {
 		if(find(key) == null){
 			return false;
 		}
-		int newPage = pageManager.allocateNewPage();
-		boolean rootEmptyKeys = root.remove(key, null, newPage);
+		boolean rootEmptyKeys = root.remove(key, null);
 		if (rootEmptyKeys){
 			//root ma 0 kluczy i jednego potomka
 			//root przechodzi na swojego potomka, wysokosc drzewa zmniejszona o 1
