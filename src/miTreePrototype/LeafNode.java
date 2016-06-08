@@ -3,7 +3,6 @@ package miTreePrototype;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-import miTree.PageManager;
 
 
 public class LeafNode<K extends Comparable<K>, V> extends Node<K, V> implements Serializable {
@@ -12,13 +11,13 @@ public class LeafNode<K extends Comparable<K>, V> extends Node<K, V> implements 
 		super(order);
 	}
 	
-	public V getValue(int index, miTree.PageManager<K, V> pageManager){
-		miTree.MemoryPage<K, V> memoryPage = pageManager.getPage(pageIDs.get(index));
-		if(! (memoryPage instanceof miTree.ValuePage)){
+	public V getValue(int index, PageManager<K, V> pageManager){
+		MemoryPage<K, V> memoryPage = pageManager.getPage(pageIDs.get(index));
+		if(! (memoryPage instanceof ValuePage)){
 			System.out.println("ERROR: Tried to get value from a node page!");
 			System.exit(-1);
 		}
-		miTree.ValuePage<K, V> valuePage = (miTree.ValuePage<K, V>)memoryPage;
+		ValuePage<K, V> valuePage = (ValuePage<K, V>)memoryPage;
 		return valuePage.readValue();
 	}
 	
@@ -32,11 +31,11 @@ public class LeafNode<K extends Comparable<K>, V> extends Node<K, V> implements 
 		}
 	}
 	
-	public Split<K, V> insert(K key, V value, Integer pageID, miTree.PageManager<K, V> pageManager, Integer currentLevel){
+	public Split<K, V> insert(K key, V value, Integer pageID, PageManager<K, V> pageManager, Integer currentLevel){
 		if(keys.size() == 0){
 			keys.add(key);
 			int newPageNumber=pageManager.allocateNewValuePage();
-			((miTree.ValuePage<K,V>) pageManager.getPage(newPageNumber)).writeValue(value);
+			((ValuePage<K,V>) pageManager.getPage(newPageNumber)).writeValue(value);
 			pageIDs.add(newPageNumber);
 			pageManager.writeNodeToPage(this, pageID, currentLevel);
 			
@@ -45,7 +44,7 @@ public class LeafNode<K extends Comparable<K>, V> extends Node<K, V> implements 
 			int i = getKeyLocation(key);
 			keys.add(i, key);
 			int newPageNumber=pageManager.allocateNewValuePage();
-			((miTree.ValuePage<K,V>) pageManager.getPage(newPageNumber)).writeValue(value);
+			((ValuePage<K,V>) pageManager.getPage(newPageNumber)).writeValue(value);
 			pageIDs.add(i, newPageNumber);
 				
 			pageManager.writeNodeToPage(this, pageID, currentLevel);
@@ -70,7 +69,7 @@ public class LeafNode<K extends Comparable<K>, V> extends Node<K, V> implements 
 		return new Split<K,V>(rightSibling.keys.get(0), this, rightSibling);
 	}
 
-	public void dump(String prefix, int myLevel, miTree.PageManager<K, V> pageManager) {
+	public void dump(String prefix, int myLevel, PageManager<K, V> pageManager) {
 		System.out.println(prefix + "Leaf Node ");
 		for(int i=0; i<keys.size(); i++){
 			System.out.println(prefix + getValue(i, pageManager).toString());

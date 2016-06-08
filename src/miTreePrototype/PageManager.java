@@ -1,4 +1,4 @@
-package miTree;
+package miTreePrototype;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,14 +30,14 @@ public class PageManager<K extends Comparable<K>, V> {
 		treeHeight = height;
 	}
 	
-	public miTreePrototype.Node<K, V> getNodeFromPage(int pageID, int level){
+	public Node<K, V> getNodeFromPage(int pageID, int level){
 		int size = (int)(pageSize / Math.pow(2, level));
 		int offset = size;
 		if(level == treeHeight){
 			size = size * 2;
 			offset = 0;
 		}
-		miTreePrototype.Node<K, V> retrievedNode = pageList.get(pageID).read(offset);
+		Node<K, V> retrievedNode = pageList.get(pageID).read(offset);
 		if(retrievedNode != null){
 			return retrievedNode;
 		}
@@ -51,7 +51,7 @@ public class PageManager<K extends Comparable<K>, V> {
 		return pageList.get(index);
 	}
 	
-	public void writeNodeToPage(miTreePrototype.Node<K, V> node, int pageID, int level){
+	public void writeNodeToPage(Node<K, V> node, int pageID, int level){
 		pageList.get(pageID).write(node, level, treeHeight);
 	}
 	

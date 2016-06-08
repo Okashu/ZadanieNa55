@@ -7,11 +7,11 @@ public class BPlusTree<K extends Comparable<K>, V> {
 	
 	private final int ORDER;
 	private int height;
-	public miTree.PageManager<K, V> pageManager;
+	public PageManager<K, V> pageManager;
 
 	public BPlusTree(int order, int pageSize) {
 		ORDER = order;
-		pageManager = new miTree.PageManager<K, V> (pageSize);
+		pageManager = new PageManager<K, V> (pageSize);
 		root = pageManager.allocateNewPage();
 		LeafNode<K, V> rootNode = new LeafNode<K, V>(ORDER);
 		height = 1;

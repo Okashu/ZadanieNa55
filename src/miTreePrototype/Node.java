@@ -3,7 +3,6 @@ package miTreePrototype;
 import java.util.*;
 
 
-import miTree.PageManager;
 
 public abstract class Node<K extends Comparable<K>, V> implements java.io.Serializable {
 
@@ -112,7 +111,7 @@ public abstract class Node<K extends Comparable<K>, V> implements java.io.Serial
 	public abstract boolean remove(K key, InnerNode<K, V> parent, int childIndex, int pageID, PageManager<K, V> pageManager, int currentLevel); //przekazuje rodzica, aby miec dostep do braci
 	abstract protected void mergeWith(Node<K, V> mergingNode, boolean mergeToLeft, K splitKey);
 	abstract protected K borrowKeys(Node<K, V> lender, boolean borrowFromLeft, K splitKey);
-	abstract public void dump(String prefix, int myLevel, miTree.PageManager<K, V> pageManager);
+	abstract public void dump(String prefix, int myLevel, PageManager<K, V> pageManager);
 
 	//abstract public void checkForErrors(boolean root); //DEBUG
 

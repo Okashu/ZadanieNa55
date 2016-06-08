@@ -1,4 +1,4 @@
-package miTree;
+package miTreePrototype;
 
 import java.io.File;
 import java.io.FileInputStream;

@@ -3,7 +3,6 @@ package miTreePrototype;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-import miTree.PageManager;
 
 public class InnerNode<K extends Comparable<K>, V> extends Node<K, V> implements Serializable {
 
@@ -19,7 +18,7 @@ public class InnerNode<K extends Comparable<K>, V> extends Node<K, V> implements
 		return keys.size() > Math.ceil((double)(ORDER+1)/2-1);
 	}
 	
-	public Node<K, V> getChild(int index, int myLevel, miTree.PageManager<K, V> pageManager){
+	public Node<K, V> getChild(int index, int myLevel, PageManager<K, V> pageManager){
 		return pageManager.getNodeFromPage(pageIDs.get(index), myLevel - 1);
 	}
 	
@@ -27,7 +26,7 @@ public class InnerNode<K extends Comparable<K>, V> extends Node<K, V> implements
 		pageIDs.set(index, pageNumber);
 	}
 
-	public Split<K, V> insert(K key, V value, Integer pageID, miTree.PageManager<K, V> pageManager, Integer currentLevel){
+	public Split<K, V> insert(K key, V value, Integer pageID, PageManager<K, V> pageManager, Integer currentLevel){
 		
 		int i = getKeyLocation(key);
 		Split<K,V> split = getChild(i,currentLevel,pageManager).insert(key, value,pageID,pageManager, currentLevel - 1);
@@ -68,7 +67,7 @@ public class InnerNode<K extends Comparable<K>, V> extends Node<K, V> implements
 		return new Split<K,V>(middleKey, this, rightSibling);
 	}
 
-	public void dump(String prefix, int myLevel, miTree.PageManager<K, V> pageManager) {
+	public void dump(String prefix, int myLevel, PageManager<K, V> pageManager) {
 		System.out.println(prefix + "Inner Node");
 		for(int i=0; i<pageIDs.size(); i++){
 			getChild(i, myLevel, pageManager).dump(prefix + "    ", myLevel - 1, pageManager);

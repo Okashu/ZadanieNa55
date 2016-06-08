@@ -1,4 +1,4 @@
-package miTree;
+package miTreePrototype;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -40,7 +40,7 @@ public class MemoryPage<K extends Comparable<K>, V> {
 		}
 	}
 
-	public void write(miTreePrototype.Node<K, V> node, int lvl, int height) {
+	public void write(Node<K, V> node, int lvl, int height) {
 		if(this instanceof ValuePage){
 			System.out.println("ERROR: attempt to write node to value page.");
 			System.exit(-1);
@@ -106,7 +106,7 @@ public class MemoryPage<K extends Comparable<K>, V> {
 		return out.toByteArray().length;
 	}
 
-	private int write(FileOutputStream out, miTreePrototype.Node<K, V> node) throws IOException {
+	private int write(FileOutputStream out, Node<K, V> node) throws IOException {
 		int nodeLength = 0;
 		ObjectOutputStream writer = new ObjectOutputStream(out);
 		nodeLength = serializationLength(node);
@@ -122,18 +122,18 @@ public class MemoryPage<K extends Comparable<K>, V> {
 
 	}
 	
-	public miTreePrototype.Node<K, V> read(int offset) {
+	public Node<K, V> read(int offset) {
 		if(this instanceof ValuePage){
 			throw new IllegalArgumentException();
 		}
-		miTreePrototype.Node<K, V> node = null;
+		Node<K, V> node = null;
 		try {
 			FileInputStream in = new FileInputStream(fileName);
 			in.skip(offset);
 			ObjectInputStream reader = new ObjectInputStream(in);
 			
 			//reader.skipBytes(offset);
-			node = (miTreePrototype.Node<K, V>)reader.readObject();
+			node = (Node<K, V>)reader.readObject();
 			//System.out.println(node.toString());
 			//System.out.println(node.getClass().toString());
 			//System.out.println(node.pageIDs);
