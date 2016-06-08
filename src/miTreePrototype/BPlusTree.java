@@ -80,20 +80,26 @@ public class BPlusTree<K extends Comparable<K>, V> {
 		}
 	}
 	
-	/*public boolean remove(K key){
+	public boolean remove(K key){
 		if(find(key) == null){
 			return false;
 		}
-		boolean rootEmptyKeys = root.remove(key, null);
+		int newPageID = pageManager.allocateNewPage();
+		Node<K,V> rootNode = pageManager.getNodeFromPage(root,height);
+		boolean rootEmptyKeys = rootNode.remove(key, null, -1, newPageID, pageManager, height);
+		root = newPageID;
 		if (rootEmptyKeys){
 			//root ma 0 kluczy i jednego potomka
 			//root przechodzi na swojego potomka, wysokosc drzewa zmniejszona o 1
-			root = ((InnerNode<K,V>)root).getChild(0); //tu bedzie pageNumber
-			height--;
+			//root = ((InnerNode<K,V>)root).getChild(0); //tu bedzie pageNumber
+			
+			rootNode = ((InnerNode<K,V>)rootNode).getChild(0, height, pageManager);
+			setHeight(height - 1);
+			pageManager.writeNodeToPage(rootNode, newPageID, height);
 		}
 		//checkForErrors(); //DEBUG
 		return true;
-	}*/
+	}
 	
 	public void dump(){
 		System.out.println("miTree of height " + height );

@@ -139,7 +139,7 @@ public class MemoryPage<K extends Comparable<K>, V> {
 			//System.out.println(node.pageIDs);
 			in.close();
 		} catch (IOException e) {
-			System.out.println("ERROR: IOException while reading offset: " + offset);
+			System.out.println("ERROR: IOException while reading offset: " + offset + " in file " + fileName);
 			e.printStackTrace();
 			System.exit(-1);
 		} catch (ClassNotFoundException e) {

@@ -3,6 +3,8 @@ package miTreePrototype;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+import miTree.PageManager;
+
 
 public class LeafNode<K extends Comparable<K>, V> extends Node<K, V> implements Serializable {
 
@@ -29,8 +31,8 @@ public class LeafNode<K extends Comparable<K>, V> extends Node<K, V> implements 
 			return -1;
 		}
 	}
+	
 	public Split<K, V> insert(K key, V value, Integer pageID, miTree.PageManager<K, V> pageManager, Integer currentLevel){
-		
 		if(keys.size() == 0){
 			keys.add(key);
 			int newPageNumber=pageManager.allocateNewValuePage();
@@ -75,16 +77,17 @@ public class LeafNode<K extends Comparable<K>, V> extends Node<K, V> implements 
 		}
 	}
 
-/*	public boolean remove(K key, InnerNode<K,V> parent) {
+	public boolean remove(K key, InnerNode<K,V> parent, int childIndex, int pageID, PageManager<K, V> pageManager, int currentLevel) {
 		int i = getExactKeyLocation(key);
 		if (i < 0){
 			return false;
 		}
 		keys.remove(i);
-		values.remove(i);
+		pageIDs.remove(i);
 		if(this.needsToBeMerged()){
-			return this.handleMerger(parent);
+			return this.handleMerger(parent, childIndex, pageID, pageManager, currentLevel);
 		} else {
+			pageManager.writeNodeToPage(this, pageID, currentLevel);
 			return false;
 		}
 	}
@@ -93,10 +96,10 @@ public class LeafNode<K extends Comparable<K>, V> extends Node<K, V> implements 
 		//polacz tablice kluczy i wartosci
 		if (mergeToLeft){
 			keys.addAll(0, mergingNode.keys);
-			values.addAll(0, ((LeafNode<K,V>)mergingNode).values);
+			pageIDs.addAll(0, ((LeafNode<K,V>)mergingNode).pageIDs);
 		} else {
 			keys.addAll(mergingNode.keys);
-			values.addAll(((LeafNode<K,V>)mergingNode).values);
+			pageIDs.addAll(((LeafNode<K,V>)mergingNode).pageIDs);
 		}
 	}
 
@@ -105,10 +108,10 @@ public class LeafNode<K extends Comparable<K>, V> extends Node<K, V> implements 
 		int borrowerIndex = (borrowFromLeft) ? 0 : (this.keys.size());
 		int lenderIndex = (borrowFromLeft) ? (lender.keys.size() - 1) : 0;
 		keys.add(borrowerIndex, lender.keys.get(lenderIndex));
-		values.add(borrowerIndex, ((LeafNode<K,V>)lender).values.get(lenderIndex));
+		pageIDs.add(borrowerIndex, ((LeafNode<K,V>)lender).pageIDs.get(lenderIndex));
 		
 		lender.keys.remove(lenderIndex);
-		((LeafNode<K,V>)lender).values.remove(lenderIndex);
+		((LeafNode<K,V>)lender).pageIDs.remove(lenderIndex);
 		
 		return (borrowFromLeft) ? this.keys.get(0) : lender.keys.get(0);
 	}
