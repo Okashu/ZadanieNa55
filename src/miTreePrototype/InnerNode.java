@@ -33,17 +33,19 @@ public class InnerNode<K extends Comparable<K>, V> extends Node<K, V> implements
 		if (split != null){
 			int j = getKeyLocation(split.key);
 			keys.add(j, split.key);
-			int temp=pageManager.allocateNewPage();
-			pageManager.writeNodeToPage(split.right,temp,currentLevel-1);
-			pageIDs.add(j+1, temp);
+			pageIDs.set(j, pageID);
 			pageManager.writeNodeToPage(split.left, pageID, currentLevel-1);
-			pageIDs.add(j,pageID);
+			int temp = pageManager.allocateNewPage();
+			pageIDs.add(j+1, temp);
+			pageManager.writeNodeToPage(split.right, temp, currentLevel-1);
+			
 			if(needsToBeSplit()){
 				return this.split();
 			}else{
 				pageManager.writeNodeToPage(this, pageID, currentLevel);
 			}
-		}else{
+		} else {
+			pageIDs.set(i, pageID);
 			pageManager.writeNodeToPage(this, pageID, currentLevel);
 		}
 		return null;
