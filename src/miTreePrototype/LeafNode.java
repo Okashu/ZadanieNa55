@@ -31,7 +31,7 @@ public class LeafNode<K extends Comparable<K>, V> extends Node<K, V> implements 
 		}
 	}
 	
-	public Split<K, V> insert(K key, V value, Integer pageID, PageManager<K, V> pageManager, Integer currentLevel){
+	public Split<K, V> insert(K key, V value, int pageID, PageManager<K, V> pageManager, int currentLevel){
 		if(keys.size() == 0){
 			keys.add(key);
 			int newPageNumber=pageManager.allocateNewValuePage();
