@@ -55,10 +55,10 @@ public class LeafNode<K extends Comparable<K>, V> extends Node<K, V> {
 		return new Split<K,V>(rightSibling.keys.get(0), this, rightSibling);
 	}
 
-	public void dump(String prefix) {
+	public void dump(String prefix, int myLevel, miTree.PageManager pageManager) {
 		System.out.println(prefix + "Leaf Node ");
 		for(int i=0; i<keys.size(); i++){
-			System.out.println(prefix + getValue(i).toString());
+			System.out.println(prefix + getValue(i, pageManager).toString());
 		}
 	}
 

@@ -87,7 +87,7 @@ public abstract class Node<K extends Comparable<K>, V> {
 	public abstract boolean remove(K key, int parentPageID); //przekazuje rodzica, aby miec dostep do braci
 	abstract protected void mergeWith(Node<K, V> mergingNode, boolean mergeToLeft, K splitKey);
 	abstract protected K borrowKeys(Node<K, V> lender, boolean borrowFromLeft, K splitKey);
-	abstract public void dump(String prefix);
+	abstract public void dump(String prefix, int myLevel, miTree.PageManager pageManager);
 
 	//abstract public void checkForErrors(boolean root); //DEBUG
 

@@ -58,10 +58,10 @@ public class InnerNode<K extends Comparable<K>, V> extends Node<K, V> {
 		return new Split<K,V>(middleKey, this, rightSibling);
 	}
 
-	public void dump(String prefix) {
+	public void dump(String prefix, int myLevel, miTree.PageManager pageManager) {
 		System.out.println(prefix + "Inner Node");
-		for(int i=0; i<children.size(); i++){
-			getChild(i).dump(prefix + " ");
+		for(int i=0; i<pageIDs.size(); i++){
+			getChild(i, myLevel, pageManager).dump(prefix + " ", myLevel - 1, pageManager);
 			if(i<keys.size()){
 				System.out.println(prefix + "+Key: " + keys.get(i));
 			}

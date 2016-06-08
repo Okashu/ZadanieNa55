@@ -18,7 +18,11 @@ public class BPlusTree<K extends Comparable<K>, V> {
 		root = 0;
 		height = 1;
 	}
-	
+
+	public void setHeight(int height){
+		this.height = height;
+		pageManager.setTreeHeight(height);
+	}
 	public int getHeight(){ return height; }
 	
 	private LeafNode<K,V> searchForNode(K key){
@@ -46,13 +50,18 @@ public class BPlusTree<K extends Comparable<K>, V> {
 	}
 	
 	public void insert(K key, V value){
-		int newPageNumber = pageManager.allocateNewPage();
-		Split<K,V> split = pageManager.getNodeFromPage(root,height).insert(key, value, newPageNumber, pageManager, height);
+		int newPageID = pageManager.allocateNewPage();
+		Split<K,V> split = pageManager.getNodeFromPage(root,height).insert(key, value, newPageID, pageManager, height);
 		if (split != null){
-			root = new InnerNode<K,V>(ORDER);
-			root.keys.add(split.key);
-			((InnerNode<K,V>)root).children.add(split.left);
-			((InnerNode<K,V>)root).children.add(split.right);
+			setHeight(height + 1);
+			int splitPageID = pageManager.allocateNewPage();
+			InnerNode<K, V> rootNode = new InnerNode<K,V>(ORDER);
+			rootNode.keys.add(split.key);
+			pageManager.writeNodeToPage(split.left, newPageID, height - 1);
+			pageManager.writeNodeToPage(split.right, splitPageID, height - 1);
+			pageManager.writeNodeToPage(rootNode, newPageID, height);
+			rootNode.pageIDs.add(newPageID);
+			rootNode.pageIDs.add(splitPageID);
 		}
 	}
 	
@@ -87,7 +96,7 @@ public class BPlusTree<K extends Comparable<K>, V> {
 	}
 	
 	public void dump(){
-		root.dump("");
+		pageManager.getNodeFromPage(root, height).dump("", height, pageManager);
 	}
 	
 	/*private void checkForErrors(){
