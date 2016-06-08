@@ -16,7 +16,7 @@ public class InnerNode<K extends Comparable<K>, V> extends Node<K, V> {
 		return keys.size() > Math.ceil((double)(ORDER+1)/2-1);
 	}
 	
-	public Node<K, V> getChild(int index, int myLevel, miTree.PageManager pageManager){
+	public Node<K, V> getChild(int index, int myLevel, miTree.PageManager<K, V> pageManager){
 		return pageManager.getNodeFromPage(pageIDs.get(index), myLevel - 1);
 	}
 	
@@ -53,14 +53,14 @@ public class InnerNode<K extends Comparable<K>, V> extends Node<K, V> {
 		K middleKey = this.keys.get(mid);
 		
 		rightSibling.keys = new ArrayList<K>(keys.subList(mid + 1, keys.size()));
-		rightSibling.children = new ArrayList<Node<K,V>>(children.subList(mid + 1, children.size()));
+		rightSibling.pageIDs = new ArrayList<Integer>(pageIDs.subList(mid + 1, pageIDs.size()));
 		this.keys = new ArrayList<K>(keys.subList(0, mid));
-		this.children =  new ArrayList<Node<K,V>>(children.subList(0, mid + 1));
+		this.pageIDs =  new ArrayList<int>(pageIDs.subList(0, mid + 1));
 		
 		return new Split<K,V>(middleKey, this, rightSibling);
 	}
 
-	public void dump(String prefix, int myLevel, miTree.PageManager pageManager) {
+	public void dump(String prefix, int myLevel, miTree.PageManager<K, V> pageManager) {
 		System.out.println(prefix + "Inner Node");
 		for(int i=0; i<pageIDs.size(); i++){
 			getChild(i, myLevel, pageManager).dump(prefix + " ", myLevel - 1, pageManager);

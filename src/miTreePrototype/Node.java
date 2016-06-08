@@ -10,7 +10,6 @@ public abstract class Node<K extends Comparable<K>, V> {
 	protected final int ORDER;
 	public List<K> keys;
 	public List<Integer> pageIDs;
-	private int level;
 	
 	Node(int order){
 		ORDER = order;
@@ -84,10 +83,10 @@ public abstract class Node<K extends Comparable<K>, V> {
 	
 	public abstract Split<K, V> insert(K key, V value, Integer pageID, PageManager<K, V> pageManager, Integer currentLevel);	
 	public abstract Split<K, V> split();
-	public abstract boolean remove(K key, int parentPageID); //przekazuje rodzica, aby miec dostep do braci
+	public abstract boolean remove(K key, InnerNode<K, V> parent); //przekazuje rodzica, aby miec dostep do braci
 	abstract protected void mergeWith(Node<K, V> mergingNode, boolean mergeToLeft, K splitKey);
 	abstract protected K borrowKeys(Node<K, V> lender, boolean borrowFromLeft, K splitKey);
-	abstract public void dump(String prefix, int myLevel, miTree.PageManager pageManager);
+	abstract public void dump(String prefix, int myLevel, miTree.PageManager<K, V> pageManager);
 
 	//abstract public void checkForErrors(boolean root); //DEBUG
 

@@ -27,6 +27,10 @@ public class MemoryPage<K extends Comparable<K>, V> {
 	}
 
 	public void write(miTreePrototype.Node<K, V> node, int lvl, int height) {
+		if(this instanceof ValuePage){
+			System.out.println("ERROR: attempt to write node to value page.");
+			return;
+		}
 		File file = new File(fileName);
 		File temp = new File("temp.BIN");
 		int beginning = 0;	//liczba bitów przed node'em do wpisania
@@ -98,6 +102,10 @@ public class MemoryPage<K extends Comparable<K>, V> {
 	}
 	
 	public miTreePrototype.Node<K, V> read(int offset) {
+		if(this instanceof ValuePage){
+			System.out.println("ERROR: Attempting to read node from value page");
+			return null;
+		}
 		miTreePrototype.Node<K, V> node = null;
 		try {
 			FileInputStream in = new FileInputStream(fileName);

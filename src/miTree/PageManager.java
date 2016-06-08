@@ -47,7 +47,7 @@ public class PageManager<K extends Comparable<K>, V> {
 		}
 		
 	}
-	public MemoryPage getPage(int index){
+	public MemoryPage<K, V> getPage(int index){
 		return pageList.get(index);
 	}
 	

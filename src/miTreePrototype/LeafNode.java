@@ -58,14 +58,14 @@ public class LeafNode<K extends Comparable<K>, V> extends Node<K, V> {
 		LeafNode<K,V> rightSibling = new LeafNode<K,V>(ORDER);
 		
 		rightSibling.keys = new ArrayList<K>(keys.subList(mid, keys.size()));
-		rightSibling.values = new ArrayList<V>(values.subList(mid, keys.size()));
+		rightSibling.pageIDs = new ArrayList<Integer>(pageIDs.subList(mid, keys.size()));
 		this.keys = new ArrayList<K>(keys.subList(0, mid));
-		this.values = new ArrayList<V>(values.subList(0, mid));
+		this.pageIDs = new ArrayList<Integer>(pageIDs.subList(0, mid));
 		
 		return new Split<K,V>(rightSibling.keys.get(0), this, rightSibling);
 	}
 
-	public void dump(String prefix, int myLevel, miTree.PageManager pageManager) {
+	public void dump(String prefix, int myLevel, miTree.PageManager<K, V> pageManager) {
 		System.out.println(prefix + "Leaf Node ");
 		for(int i=0; i<keys.size(); i++){
 			System.out.println(prefix + getValue(i, pageManager).toString());
