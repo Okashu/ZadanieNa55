@@ -28,7 +28,7 @@ public class BPlusTree<K extends Comparable<K>, V> {
 		Node<K,V> node = pageManager.getNodeFromPage(root, height);
 		int currentLevel = height;
 		while (node instanceof InnerNode){
-			InnerNode<K, V> innerNode = (InnerNode)node;
+			InnerNode<K, V> innerNode = (InnerNode<K, V>)node;
 			node = innerNode.getChild(node.getKeyLocation(key), currentLevel, pageManager);
 			currentLevel--;
 		}
@@ -96,6 +96,7 @@ public class BPlusTree<K extends Comparable<K>, V> {
 	}*/
 	
 	public void dump(){
+		System.out.println("miTree of height " + height );
 		pageManager.getNodeFromPage(root, height).dump("", height, pageManager);
 	}
 	
