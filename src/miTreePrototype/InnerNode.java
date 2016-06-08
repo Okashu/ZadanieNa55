@@ -24,10 +24,10 @@ public class InnerNode<K extends Comparable<K>, V> extends Node<K, V> {
 		pageIDs.set(index, pageNumber);
 	}
 
-	public Split<K, V> insert(K key, V value, Integer pageID, PageManager<K, V> pageManager, Integer currentLevel){
+	public Split<K, V> insert(K key, V value, Integer pageID, miTree.PageManager<K, V> pageManager, Integer currentLevel){
 		
 		int i = getKeyLocation(key);
-		Split<K,V> split = getChild(i,currentLevel-1,pageManager).insert(key, value,pageID,pageManager, currentLevel - 1);
+		Split<K,V> split = getChild(i,currentLevel,pageManager).insert(key, value,pageID,pageManager, currentLevel - 1);
 		
 		if (split != null){
 			int j = getKeyLocation(split.key);
@@ -35,10 +35,12 @@ public class InnerNode<K extends Comparable<K>, V> extends Node<K, V> {
 			int temp=pageManager.allocateNewPage();
 			pageManager.writeNodeToPage(split.right,temp,currentLevel);
 			pageIDs.add(j+1, temp);
-			
+			pageManager.writeNodeToPage(this, pageID, currentLevel);
 			if(needsToBeSplit()){
 				return this.split();
 			}
+		}else{
+			pageManager.writeNodeToPage(this, pageID, currentLevel);
 		}
 		return null;
 	}
