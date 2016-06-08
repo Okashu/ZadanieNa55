@@ -3,6 +3,8 @@ package miTreePrototype;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+import miTree.PageManager;
+
 public class InnerNode<K extends Comparable<K>, V> extends Node<K, V> implements Serializable {
 
 	
@@ -77,29 +79,24 @@ public class InnerNode<K extends Comparable<K>, V> extends Node<K, V> implements
 	}
 	
 	// zwraca lewego brata podanego dziecka
-	/*public Node<K,V> getChildsLeftSibling(Node<K,V> child){
-		for(int i=1; i < children.size(); i++){
-			if (getChild(i) == child){
-				return getChild(i-1);
-			}
+	public Node<K,V> getChildsLeftSibling(int childIndex, int childLevel, PageManager<K, V> pageManager){
+		if(childIndex > 0){
+			return getChild(childIndex-1, childLevel+1, pageManager);
 		}
 		return null;
 	}
 	
 	// zwraca prawego brata podanego dziecka
-	public Node<K,V> getChildsRightSibling(Node<K,V> child){
-		for(int i=0; i < children.size()-1; i++){
-			if (getChild(i) == child){
-				return getChild(i+1);
-			}
+	public Node<K,V> getChildsRightSibling(int childIndex, int childLevel, PageManager<K, V> pageManager){
+		if(childIndex < pageIDs.size()-1){
+			return getChild(childIndex+1, childLevel+1, pageManager);
 		}
 		return null;
 	}
 
-	public boolean remove(K key, InnerNode<K,V> parent) {
+	public boolean remove(K key, InnerNode<K,V> parent, int childIndex, int pageID, PageManager<K, V> pageManager, int currentLevel) {
 		int i = getKeyLocation(key);
-		boolean changedKeysSize = getChild(i).remove(key, this);
-
+		boolean changedKeysSize = getChild(i, currentLevel, pageManager).remove(key, this, i, pageID, pageManager, currentLevel - 1);
 		if (changedKeysSize){
 			// syn zmienil liczbe kluczy rodzica
 			
@@ -109,74 +106,64 @@ public class InnerNode<K extends Comparable<K>, V> extends Node<K, V> implements
 					// dziecko staje sie nowym root'em
 					return true;
 				} else {
+					pageManager.writeNodeToPage(this, pageID, currentLevel);
 					return false;
 				}
 			} else {
 				// poniewaz usunieto klucz, kluczy moze byc za malo
 				if(this.needsToBeMerged()){
-					return handleMerger(parent);
+					return handleMerger(parent, childIndex, pageID, pageManager, currentLevel);
 				} else {
+					pageManager.writeNodeToPage(this, pageID, currentLevel);
 					return false;
 				}
 			}
 
+		} else {
+			setChild(i, pageID);
+			pageManager.writeNodeToPage(this, pageID, currentLevel);
 		}
 		
 		return false;
 	}
 	
 	// zwraca klucz oddzielajacy dwoch braci
-	public K getChildSplitKey(Node<K,V> child, boolean leftSibling){
-		if(!leftSibling && getChild(0) == child){
-			return keys.get(0);
-		}
-		for(int i=1; i < children.size(); i++){
-			if (getChild(i) == child){
-				if(leftSibling){
-					return keys.get(i-1);
-				} else {
-					return keys.get(i);
-				}
-			}
+	public K getChildSplitKey(int childIndex, boolean leftSibling){
+		if(leftSibling && childIndex > 0){
+			return keys.get(childIndex-1);
+		} else if(childIndex < pageIDs.size()){
+			return keys.get(childIndex);
 		}
 		return null;
 	}
 	
 	// zmienia klucz oddzielajacy dwoch braci
-	public K setChildSplitKey(Node<K,V> child, boolean leftSibling, K key){
-		if(!leftSibling && getChild(0) == child){
-			keys.set(0, key);
+	public void setChildSplitKey(int childIndex, boolean leftSibling, K key){
+		if(leftSibling && childIndex > 0){
+			keys.set(childIndex-1, key);
+		} else if(childIndex < pageIDs.size()){
+			keys.set(childIndex, key);
 		}
-		for(int i=1; i < children.size(); i++){
-			if (children.get(i) == child){
-				if(leftSibling){
-					return keys.set(i-1, key);
-				} else {
-					return keys.set(i, key);
-				}
-			}
-		}
-		return null;
 	}
 	
-	// usuwa klucz oddzielajacy pierwotnie oddzielajacy dwoch polaczonych braci
-	public K removeChildSplitKey(Node<K,V> child, boolean leftSibling){
-		if(!leftSibling && children.get(0) == child){
-			keys.remove(0);
-			children.remove(1);
-		}
-		for(int i=1; i < children.size(); i++){
-			if (getChild(i) == child){
-				if(leftSibling){
-					keys.remove(i-1);
-					children.remove(i-1);
-				} else {
-					keys.remove(i);
-					children.remove(i+1);
-				}
+	/*public int getChildsId(Node<K,V> child, int childLevel, PageManager<K, V> pageManager){
+		for(int i=0; i < pageIDs.size(); i++){
+			if (getChild(i, childLevel+1, pageManager) == child){
+				return pageIDs.get(i);
 			}
 		}
-		return null;
+		return -1;
+	}*/
+	
+	// usuwa klucz oddzielajacy pierwotnie oddzielajacy dwoch polaczonych braci
+	public void removeChildSplitKey(int childIndex, boolean leftSibling){
+		if(leftSibling && childIndex > 0){
+			keys.remove(childIndex-1);
+			pageIDs.remove(childIndex-1);
+		} else if(childIndex < pageIDs.size()){
+			keys.remove(childIndex);
+			pageIDs.remove(childIndex+1);
+		}
 	}
 
 	protected void mergeWith(Node<K, V> mergingNode, boolean mergeToLeft, K splitKey) {
@@ -184,11 +171,11 @@ public class InnerNode<K extends Comparable<K>, V> extends Node<K, V> implements
 		if (mergeToLeft){
 			keys.add(0, splitKey);
 			keys.addAll(0, mergingNode.keys);
-			children.addAll(0, ((InnerNode<K,V>)mergingNode).children);
+			pageIDs.addAll(0, ((InnerNode<K,V>)mergingNode).pageIDs);
 		} else {
 			keys.add(splitKey);
 			keys.addAll(mergingNode.keys);
-			children.addAll(((InnerNode<K,V>)mergingNode).children);
+			pageIDs.addAll(((InnerNode<K,V>)mergingNode).pageIDs);
 		}	
 	}
 
@@ -199,20 +186,20 @@ public class InnerNode<K extends Comparable<K>, V> extends Node<K, V> implements
 			// pozycza z lewej
 			// w tym celu bierze takze klucz z rodzica, zas klucz z brata przechodzi na rodzica
 			keys.add(0, splitKey);
-			children.add(0,((InnerNode<K,V>)lender).getChild(lenderIndex + 1));
+			pageIDs.add(0,((InnerNode<K,V>)lender).pageIDs.get(lenderIndex + 1));
 			pushedKey = lender.keys.get(lenderIndex);
 			
 			lender.keys.remove(lenderIndex);
-			((InnerNode<K,V>)lender).children.remove(lenderIndex + 1);
+			((InnerNode<K,V>)lender).pageIDs.remove(lenderIndex + 1);
 		} else {
 			// pozycza z prawej
 			// w tym celu bierze takze klucz z rodzica, zas klucz z brata przechodzi na rodzica
 			keys.add(splitKey);
-			children.add(((InnerNode<K,V>)lender).getChild(lenderIndex));
+			pageIDs.add(((InnerNode<K,V>)lender).pageIDs.get(lenderIndex));
 			pushedKey = lender.keys.get(lenderIndex);
 			
 			lender.keys.remove(lenderIndex);
-			((InnerNode<K,V>)lender).children.remove(lenderIndex);	
+			((InnerNode<K,V>)lender).pageIDs.remove(lenderIndex);	
 		}
 		return pushedKey;
 	}

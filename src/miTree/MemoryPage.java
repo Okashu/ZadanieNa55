@@ -104,6 +104,7 @@ public class MemoryPage<K extends Comparable<K>, V> {
 	public miTreePrototype.Node<K, V> read(int offset) {
 		if(this instanceof ValuePage){
 			System.out.println("ERROR: Attempting to read node from value page");
+			int a = 1/0;
 			return null;
 		}
 		miTreePrototype.Node<K, V> node = null;
@@ -119,7 +120,7 @@ public class MemoryPage<K extends Comparable<K>, V> {
 			//System.out.println(node.pageIDs);
 			in.close();
 		} catch (IOException e) {
-			System.out.println("IOException w read" + offset);
+			System.out.println("IOException w read" + offset + " " + fileName);
 			e.printStackTrace();
 			System.exit(0);
 		} catch (ClassNotFoundException e) {
