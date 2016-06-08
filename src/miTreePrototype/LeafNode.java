@@ -11,6 +11,11 @@ public class LeafNode<K extends Comparable<K>, V> extends Node<K, V> implements 
 	}
 	
 	public V getValue(int index, miTree.PageManager<K, V> pageManager){
+		miTree.MemoryPage<K, V> memoryPage = pageManager.getPage(pageIDs.get(index));
+		if(! (memoryPage instanceof miTree.ValuePage)){
+			System.out.println("ERROR: Tried to get value from a node page!");
+			System.exit(-1);
+		}
 		miTree.ValuePage<K, V> valuePage = (miTree.ValuePage<K, V>)(pageManager.getPage(pageIDs.get(index)));
 		return (V)(valuePage.readValue());
 	}

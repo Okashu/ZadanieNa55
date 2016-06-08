@@ -16,7 +16,7 @@ public class Main {
 		}
 		tree2.dump();
 
-		for(int i=0; i<=200; i++){
+	/*	for(int i=0; i<=200; i++){
 			System.out.println(i + ": " + tree2.retrieve(i));
 		}
 		tree2.dump();
@@ -69,7 +69,7 @@ public class Main {
 	//	tree3.remove(3);
 		tree3.dump();
 		tree3.insert(2, 2);
-		tree3.dump();
+		tree3.dump();*/
 		
 	}
 
