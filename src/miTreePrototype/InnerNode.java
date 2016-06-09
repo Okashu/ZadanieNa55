@@ -26,7 +26,7 @@ public class InnerNode<K extends Comparable<K>, V> extends Node<K, V> implements
 		pageIDs.set(index, pageNumber);
 	}
 
-	public Split<K, V> insert(K key, V value, Integer pageID, PageManager<K, V> pageManager, Integer currentLevel){
+	public Split<K, V> insert(K key, V value, int pageID, PageManager<K, V> pageManager, int currentLevel){
 		
 		int i = getKeyLocation(key);
 		Split<K,V> split = getChild(i,currentLevel,pageManager).insert(key, value,pageID,pageManager, currentLevel - 1);
