@@ -1,13 +1,102 @@
 package miTreePrototype;
 
+import java.util.StringTokenizer;
 
 public class Main {
 
 	public static final int PAGESIZE = 4096;
 	
 	public static void main(String[] args){
+		if(System.console() == null){
+			oldMain();
+			return;
+		}
 		
+		System.out.print("Welcome to the miTree testing prorgam. Please choose an option:\n"
+				+ "1. Run an example program, creating and modifying some trees\n"
+				+ "2. Run a simple interactive program, allowing you to create and modify miTrees yourself\n"
+				+ "Choose an option: ");
+		
+		String input = System.console().readLine();
+		
+		int option;
+		try{
+			option = Integer.parseInt(input);
+			if(option == 1){
+				System.out.println("\n");
+				oldMain();
+			}
+			else if(option == 2){
+				System.out.print("\n");
+				testingProgram();
+			}
+			else{
+				throw new NumberFormatException();
+			}
+		}
+		catch(NumberFormatException e){
+			System.out.println("Invalid option!");
+			return;
+		}
+	}
 	
+	private static void testingProgram(){
+		System.out.print("In this program, you'll be able to create and modify Integer mitrees.\n"
+				+ "Please specify the tree ORDER: ");
+
+		int order;
+		String input = System.console().readLine();
+		System.out.print("\n");
+		try{
+			order = Integer.parseInt(input);
+			if(order <= 0){
+				throw new NumberFormatException();
+			}
+		}
+		catch(NumberFormatException e){
+			System.out.println("Invalid order!");
+			return;
+		}
+		
+		BPlusTree<Integer, Integer> bpt = new BPlusTree<Integer, Integer>(order, PAGESIZE);
+		while(true){
+			System.out.print("Your options are: (I)nsert <NUMBER>, (R)emove <NUMBER>, (D)raw.\n"
+					+ "Choose an option: ");
+			
+			input = System.console().readLine();
+			try{
+				if(input == null){
+					System.out.println("ERROR: no input!");
+					return;
+				}
+				StringTokenizer st = new StringTokenizer(input);
+				String option = st.nextToken().toLowerCase();
+				if(option.startsWith("i")){
+					if(!st.hasMoreTokens()){
+						throw new NumberFormatException();						
+					}
+					int argument = Integer.parseInt(st.nextToken());
+					bpt.insert(argument, argument);
+				}
+				else if(option.startsWith("r")){
+					if(!st.hasMoreTokens()){
+						throw new NumberFormatException();
+					}
+					int argument = Integer.parseInt(st.nextToken());
+					bpt.remove(argument);
+				}
+				else if(option.startsWith("d")){
+					bpt.dump();
+				}
+			}
+			catch(NumberFormatException e){
+				System.out.println("Invalid command!");
+			}
+			
+		}
+	}
+	
+	private static void oldMain(){
 		BPlusTree<Integer, Integer> tree2 = new BPlusTree<Integer, Integer>(4, PAGESIZE);
 		for(int i=200; i>=0; i--){
 			if (i%2 == 0){
@@ -71,7 +160,6 @@ public class Main {
 		tree3.dump();
 		tree3.insert(2, 2);
 		tree3.dump();*/
-		
 	}
 
 }
