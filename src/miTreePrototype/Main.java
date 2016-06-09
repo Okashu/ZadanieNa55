@@ -70,6 +70,9 @@ public class Main {
 					return;
 				}
 				StringTokenizer st = new StringTokenizer(input);
+				if(!st.hasMoreTokens()){
+					throw new NumberFormatException();
+				}
 				String option = st.nextToken().toLowerCase();
 				if(option.startsWith("i")){
 					if(!st.hasMoreTokens()){
