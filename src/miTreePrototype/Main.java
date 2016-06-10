@@ -154,7 +154,7 @@ public class Main {
 		tree2.dump();
 		
 		int j;
-		for(int i=100; i<300; i++){ // dla order=32, pagesize=2014 dochodzi do ok 550
+		for(int i=100; i<300; i++){ // dla order=32, pagesize=2048 dochodzi do ok 550
 			j = i;
 			switch (i%3){ // lekko poprzekrecana kolejnosc dodawania
 			case 0:
