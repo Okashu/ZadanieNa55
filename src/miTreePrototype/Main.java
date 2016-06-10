@@ -49,7 +49,7 @@ public class Main {
 		System.out.print("\n");
 		try{
 			order = Integer.parseInt(input);
-			if(order <= 0){
+			if(order < 3){
 				throw new NumberFormatException();
 			}
 		}

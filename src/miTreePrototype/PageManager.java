@@ -7,6 +7,7 @@ public class PageManager<K extends Comparable<K>, V> {
 	private int pageSize;
 	private int treeHeight;
 	private List<MemoryPage<K, V>> pageList;
+	private int unusedPages=0;
 	
 	public int allocateNewPage(){
 		int newPageID = pageList.size();
@@ -53,6 +54,9 @@ public class PageManager<K extends Comparable<K>, V> {
 	
 	public void writeNodeToPage(Node<K, V> node, int pageID, int level){
 		pageList.get(pageID).write(node, level, treeHeight);
+	}
+	public void addUnusedPage(){
+		unusedPages++;
 	}
 	
 }

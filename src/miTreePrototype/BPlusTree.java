@@ -51,6 +51,7 @@ public class BPlusTree<K extends Comparable<K>, V> {
 	
 	public void insert(K key, V value){
 		int newPageID = pageManager.allocateNewPage();
+		pageManager.addUnusedPage();
 		Split<K,V> split = pageManager.getNodeFromPage(root,height).insert(key, value, newPageID, pageManager, height);
 		root = newPageID;
 		if (split != null){
@@ -84,6 +85,7 @@ public class BPlusTree<K extends Comparable<K>, V> {
 		if(find(key) == null){
 			return false;
 		}
+		pageManager.addUnusedPage();
 		int newPageID = pageManager.allocateNewPage();
 		Node<K,V> rootNode = pageManager.getNodeFromPage(root,height);
 		boolean rootEmptyKeys = rootNode.remove(key, null, -1, newPageID, pageManager, height);
