@@ -67,10 +67,10 @@ public class InnerNode<K extends Comparable<K>, V> extends Node<K, V> implements
 		return new Split<K,V>(middleKey, this, rightSibling);
 	}
 
-	public void dump(String prefix, int myLevel, PageManager<K, V> pageManager) {
-		System.out.println(prefix + "Inner Node");
+	public void dump(String prefix, int myLevel, PageManager<K, V> pageManager, int myPageID) {
+		System.out.println(prefix + "Inner Node on page " + myPageID);
 		for(int i=0; i<pageIDs.size(); i++){
-			getChild(i, myLevel, pageManager).dump(prefix + "    ", myLevel - 1, pageManager);
+			getChild(i, myLevel, pageManager).dump(prefix + "    ", myLevel - 1, pageManager, pageIDs.get(i));
 			if(i<keys.size()){
 				System.out.println(prefix + "+Key: " + keys.get(i));
 			}

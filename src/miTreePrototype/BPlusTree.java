@@ -103,7 +103,7 @@ public class BPlusTree<K extends Comparable<K>, V> {
 	
 	public void dump(){
 		System.out.println("miTree of height " + height );
-		pageManager.getNodeFromPage(root, height).dump("", height, pageManager);
+		pageManager.getNodeFromPage(root, height).dump("", height, pageManager, root);
 	}
 	
 	/*private void checkForErrors(){

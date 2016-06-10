@@ -69,10 +69,10 @@ public class LeafNode<K extends Comparable<K>, V> extends Node<K, V> implements 
 		return new Split<K,V>(rightSibling.keys.get(0), this, rightSibling);
 	}
 
-	public void dump(String prefix, int myLevel, PageManager<K, V> pageManager) {
-		System.out.println(prefix + "Leaf Node ");
+	public void dump(String prefix, int myLevel, PageManager<K, V> pageManager, int myPageID) {
+		System.out.println(prefix + "Leaf Node on page " + myPageID);
 		for(int i=0; i<keys.size(); i++){
-			System.out.println(prefix + getValue(i, pageManager).toString());
+			System.out.println(prefix + getValue(i, pageManager).toString() + " - value on page " + pageIDs.get(i));
 		}
 	}
 
