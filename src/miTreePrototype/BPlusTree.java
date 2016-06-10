@@ -104,7 +104,7 @@ public class BPlusTree<K extends Comparable<K>, V> {
 	public void dump(){
 		System.out.println("miTree of height " + height );
 		pageManager.getNodeFromPage(root, height).dump("", height, pageManager, root);
-		System.out.println("REdundant pages - "+pageManager.getUnUsedPages());
+		System.out.println("Redundant pages - "+pageManager.getUnUsedPages());
 		pageManager.resetUsedPagesCount();
 	}
 	

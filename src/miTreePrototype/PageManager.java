@@ -55,8 +55,8 @@ public class PageManager<K extends Comparable<K>, V> {
 	public void writeNodeToPage(Node<K, V> node, int pageID, int level){
 		pageList.get(pageID).write(node, level, treeHeight);
 	}
-	public void addUsedPage(){
-		usedPages++;
+	public void addUsedPage(int i){
+		usedPages+=i;
 	}
 	public int getUsedPages(){
 		return usedPages;

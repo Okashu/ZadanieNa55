@@ -71,11 +71,9 @@ public class LeafNode<K extends Comparable<K>, V> extends Node<K, V> implements 
 
 	public void dump(String prefix, int myLevel, PageManager<K, V> pageManager, int myPageID) {
 		System.out.println(prefix + "Leaf Node on page " + myPageID);
-		pageManager.addUsedPage();
+		pageManager.addUsedPage(1+keys.size());//page z nodem + page z wartoœciami
 		for(int i=0; i<keys.size(); i++){
-			String temp=getValue(i, pageManager).toString();
-			System.out.println(prefix + temp + " - value on page " + pageIDs.get(i));
-			if(temp!=null) pageManager.addUsedPage();
+			System.out.println(prefix + getValue(i, pageManager).toString()+ " - value on page " + pageIDs.get(i));
 		}
 	}
 
