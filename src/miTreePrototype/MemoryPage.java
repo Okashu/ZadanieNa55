@@ -64,7 +64,7 @@ public class MemoryPage<K extends Comparable<K>, V> {
 			nodeLength = write(out, node);	// zapisywanie noda
 			if (nodeSize >= nodeLength) { 	//dopychanie 
 				write(out, nodeSize - nodeLength);
-			} else{				
+			} else{
 				in.close();
 				out.close();
 				throw new OutOfMemoryError();

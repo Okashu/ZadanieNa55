@@ -4,7 +4,7 @@ import java.util.StringTokenizer;
 
 public class Main {
 
-	public static final int PAGESIZE = 4096;
+	public static final int PAGESIZE = 2048;
 	
 	public static void main(String[] args){
 		if(System.console() == null){
@@ -100,7 +100,7 @@ public class Main {
 	}
 	
 	private static void oldMain(){
-		BPlusTree<Integer, Integer> tree2 = new BPlusTree<Integer, Integer>(4, PAGESIZE);
+		BPlusTree<Integer, Integer> tree2 = new BPlusTree<Integer, Integer>(32, PAGESIZE);
 		for(int i=200; i>=0; i--){
 			if (i%2 == 0){
 				tree2.insert(i, i);
@@ -151,6 +151,20 @@ public class Main {
 		tree2.insert(33, 33);
 		tree2.remove(14);
 		System.out.println("!");
+		tree2.dump();
+		
+		int j;
+		for(int i=100; i<300; i++){ // dla order=32, pagesize=2014 dochodzi do ok 550
+			j = i;
+			switch (i%3){ // lekko poprzekrecana kolejnosc dodawania
+			case 0:
+				j = i+1; break;
+			case 1:
+				j = i-1; break;
+			}
+			System.out.println(j);
+			tree2.insert(j, j);
+		}
 		tree2.dump();
 		
 		/*BPlusTree<Integer, Integer> tree3 = new BPlusTree<Integer, Integer>(4, PAGESIZE);

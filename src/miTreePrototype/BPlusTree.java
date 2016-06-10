@@ -10,6 +10,9 @@ public class BPlusTree<K extends Comparable<K>, V> {
 	public PageManager<K, V> pageManager;
 
 	public BPlusTree(int order, int pageSize) {
+		if (order < 3){
+			throw new IllegalArgumentException();
+		}
 		ORDER = order;
 		pageManager = new PageManager<K, V> (pageSize);
 		root = pageManager.allocateNewPage();
@@ -56,7 +59,7 @@ public class BPlusTree<K extends Comparable<K>, V> {
 		if (split != null){
 			setHeight(height + 1);
 			int splitPageID = pageManager.allocateNewPage();
-			InnerNode<K, V> rootNode = new InnerNode<K,V>(ORDER);
+			InnerNode<K, V> rootNode = new InnerNode<K,V>(Math.max(3, ORDER / (int)Math.pow(2, height) )); //kazdy wyzszy node jest mniejszy o polowe
 			rootNode.keys.add(split.key);
 			rootNode.pageIDs.add(newPageID);
 			rootNode.pageIDs.add(splitPageID);
