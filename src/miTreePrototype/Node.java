@@ -11,11 +11,11 @@ public abstract class Node<K extends Comparable<K>, V> implements java.io.Serial
 	public List<Integer> pageIDs;
 	
 	public Node(){
-		ORDER = -1;
+		ORDER = 3;
 	}
 	
-	public void doubleOrder(){
-		this.ORDER *= 2;
+	public void setOrder(int order){
+		this.ORDER = order;
 	}
 	
 	Node(int order){

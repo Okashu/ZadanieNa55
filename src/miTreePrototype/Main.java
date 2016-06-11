@@ -173,10 +173,19 @@ public class Main {
 		
 		BPlusTree<Integer, Integer> tree1000 = new BPlusTree<Integer,Integer>(32, PAGESIZE);
 		for(int i = 1000; i < 1480; i++){
+			System.out.println(i);
 			tree1000.insert(i, i);
 		}
 		
 		tree1000.dump();
+		
+		/*for(int i = 1005; i < 1475; i++){
+				System.out.println(i);
+				tree1000.remove(i);
+
+		}
+		
+		tree1000.dump();*/
 		/*BPlusTree<Integer, Integer> tree3 = new BPlusTree<Integer, Integer>(4, PAGESIZE);
 		tree3.insert(3,3);
 		tree3.insert(2, 2);
