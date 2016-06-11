@@ -100,6 +100,7 @@ public class Main {
 	}
 	
 	private static void oldMain(){
+
 		BPlusTree<Integer, Integer> tree2 = new BPlusTree<Integer, Integer>(32, PAGESIZE);
 		for(int i=200; i>=0; i--){
 			if (i%2 == 0){
@@ -162,11 +163,20 @@ public class Main {
 			case 1:
 				j = i-1; break;
 			}
+
 			System.out.println(j);
 			tree2.insert(j, j);
+
 		}
 		tree2.dump();
 		
+		
+		BPlusTree<Integer, Integer> tree1000 = new BPlusTree<Integer,Integer>(32, PAGESIZE);
+		for(int i = 1000; i < 1480; i++){
+			tree1000.insert(i, i);
+		}
+		
+		tree1000.dump();
 		/*BPlusTree<Integer, Integer> tree3 = new BPlusTree<Integer, Integer>(4, PAGESIZE);
 		tree3.insert(3,3);
 		tree3.insert(2, 2);

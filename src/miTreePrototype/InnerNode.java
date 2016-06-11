@@ -41,7 +41,11 @@ public class InnerNode<K extends Comparable<K>, V> extends Node<K, V> implements
 			pageManager.writeNodeToPage(split.right, temp, currentLevel-1);
 			
 			if(needsToBeSplit()){
-				return this.split();
+				if(currentLevel == pageManager.getTreeHeight())
+					return this.splitAsRoot();
+				else{
+					return this.split();
+				}
 			}else{
 				pageManager.writeNodeToPage(this, pageID, currentLevel);
 			}
@@ -66,9 +70,25 @@ public class InnerNode<K extends Comparable<K>, V> extends Node<K, V> implements
 		
 		return new Split<K,V>(middleKey, this, rightSibling);
 	}
+	
+	public Split<K, V> splitAsRoot(){
+		int mid = keys.size()/2;
+		InnerNode<K, V> leftSibling = new InnerNode<K, V>(Math.max(3, ORDER/2));
+		InnerNode<K,V> rightSibling = new InnerNode<K,V>(Math.max(3, ORDER/2));
+		
+		// srodkowy przechodzi calkowicie na wyzszy node
+		K middleKey = this.keys.get(mid);
+		
+		rightSibling.keys = new ArrayList<K>(keys.subList(mid + 1, keys.size()));
+		rightSibling.pageIDs = new ArrayList<Integer>(pageIDs.subList(mid + 1, pageIDs.size()));
+		leftSibling.keys = new ArrayList<K>(keys.subList(0, mid));
+		leftSibling.pageIDs =  new ArrayList<Integer>(pageIDs.subList(0, mid + 1));
+		
+		return new Split<K,V>(middleKey, leftSibling, rightSibling);
+	}
 
 	public void dump(String prefix, int myLevel, PageManager<K, V> pageManager, int myPageID) {
-		System.out.println(prefix + "Inner Node on page " + myPageID);
+		System.out.println(prefix + "Inner Node on page " + myPageID + " - order: " + ORDER);
 		for(int i=0; i<pageIDs.size(); i++){
 			getChild(i, myLevel, pageManager).dump(prefix + "    ", myLevel - 1, pageManager, pageIDs.get(i));
 			if(i<keys.size()){

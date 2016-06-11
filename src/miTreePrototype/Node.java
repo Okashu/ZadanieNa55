@@ -14,6 +14,10 @@ public abstract class Node<K extends Comparable<K>, V> implements java.io.Serial
 		ORDER = -1;
 	}
 	
+	public void doubleOrder(){
+		this.ORDER *= 2;
+	}
+	
 	Node(int order){
 		ORDER = order;
 		keys = new ArrayList<K>(ORDER);

@@ -27,8 +27,15 @@ public class PageManager<K extends Comparable<K>, V> {
 		treeHeight = 1;
 	}
 	
+	public int getPageCount(){
+		return pageList.size();
+	}
+	
 	public void setTreeHeight(int height){
 		treeHeight = height;
+	}
+	public int getTreeHeight(){
+		return treeHeight;
 	}
 	
 	public Node<K, V> getNodeFromPage(int pageID, int level){
@@ -61,7 +68,7 @@ public class PageManager<K extends Comparable<K>, V> {
 	public int getUsedPages(){
 		return usedPages;
 	}
-	public int getUnUsedPages(){
+	public int getUnUsedPageCount(){
 		return pageList.size()-usedPages;
 	}
 	public void resetUsedPagesCount(){

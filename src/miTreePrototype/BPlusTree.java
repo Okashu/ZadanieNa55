@@ -59,7 +59,7 @@ public class BPlusTree<K extends Comparable<K>, V> {
 		if (split != null){
 			setHeight(height + 1);
 			int splitPageID = pageManager.allocateNewPage();
-			InnerNode<K, V> rootNode = new InnerNode<K,V>(Math.max(3, ORDER / (int)Math.pow(2, height) )); //kazdy wyzszy node jest mniejszy o polowe
+			InnerNode<K, V> rootNode = new InnerNode<K,V>(Math.max(3, ORDER / (int)Math.pow(2, height - 1) )); //kazdy wyzszy node jest mniejszy o polowe
 			rootNode.keys.add(split.key);
 			rootNode.pageIDs.add(newPageID);
 			rootNode.pageIDs.add(splitPageID);
@@ -97,6 +97,7 @@ public class BPlusTree<K extends Comparable<K>, V> {
 			//root = ((InnerNode<K,V>)root).getChild(0); //tu bedzie pageNumber
 			
 			rootNode = ((InnerNode<K,V>)rootNode).getChild(0, height, pageManager);
+			rootNode.doubleOrder();
 			setHeight(height - 1);
 			pageManager.writeNodeToPage(rootNode, newPageID, height);
 		}
@@ -107,7 +108,8 @@ public class BPlusTree<K extends Comparable<K>, V> {
 	public void dump(){
 		System.out.println("miTree of height " + height );
 		pageManager.getNodeFromPage(root, height).dump("", height, pageManager, root);
-		System.out.println("Redundant pages - "+pageManager.getUnUsedPages());
+		System.out.println("Used pages: " + (pageManager.getPageCount() - pageManager.getUnUsedPageCount()));
+		System.out.println("Unused pages: "+pageManager.getUnUsedPageCount());
 		pageManager.resetUsedPagesCount();
 	}
 	

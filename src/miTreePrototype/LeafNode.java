@@ -50,7 +50,13 @@ public class LeafNode<K extends Comparable<K>, V> extends Node<K, V> implements 
 			pageManager.writeNodeToPage(this, pageID, currentLevel);
 			
 			if(needsToBeSplit()){
-				return this.split();
+				if(pageManager.getTreeHeight() == 1)
+				{
+					return this.splitAsRoot();
+				}
+				else{
+					return this.split();
+				}
 			} else {
 				return null;
 			}
@@ -68,9 +74,21 @@ public class LeafNode<K extends Comparable<K>, V> extends Node<K, V> implements 
 		
 		return new Split<K,V>(rightSibling.keys.get(0), this, rightSibling);
 	}
+	public Split<K, V> splitAsRoot(){
+		int mid = (int)Math.ceil((double)keys.size()/2);
+		LeafNode<K, V> leftSibling = new LeafNode<K, V>(Math.max(3, ORDER/2));
+		LeafNode<K,V> rightSibling = new LeafNode<K,V>(Math.max(3, ORDER/2));
+		System.out.println("KAKAKAKAKAKAK " + ORDER/2);
+		rightSibling.keys = new ArrayList<K>(keys.subList(mid, keys.size()));
+		rightSibling.pageIDs = new ArrayList<Integer>(pageIDs.subList(mid, keys.size()));
+		leftSibling.keys = new ArrayList<K>(keys.subList(0, mid));
+		leftSibling.pageIDs = new ArrayList<Integer>(pageIDs.subList(0, mid));
+		
+		return new Split<K,V>(rightSibling.keys.get(0), leftSibling, rightSibling);
+	}
 
 	public void dump(String prefix, int myLevel, PageManager<K, V> pageManager, int myPageID) {
-		System.out.println(prefix + "Leaf Node on page " + myPageID);
+		System.out.println(prefix + "Leaf Node on page " + myPageID + " - order: "+ ORDER);
 		pageManager.addUsedPage(1+keys.size());//page z nodem + page z wartoœciami
 		for(int i=0; i<keys.size(); i++){
 			System.out.println(prefix + getValue(i, pageManager).toString()+ " - value on page " + pageIDs.get(i));
