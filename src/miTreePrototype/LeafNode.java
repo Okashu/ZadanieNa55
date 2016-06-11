@@ -78,7 +78,6 @@ public class LeafNode<K extends Comparable<K>, V> extends Node<K, V> implements 
 		int mid = (int)Math.ceil((double)keys.size()/2);
 		LeafNode<K, V> leftSibling = new LeafNode<K, V>(Math.max(3, ORDER/2));
 		LeafNode<K,V> rightSibling = new LeafNode<K,V>(Math.max(3, ORDER/2));
-		System.out.println("KAKAKAKAKAKAK " + ORDER/2);
 		rightSibling.keys = new ArrayList<K>(keys.subList(mid, keys.size()));
 		rightSibling.pageIDs = new ArrayList<Integer>(pageIDs.subList(mid, keys.size()));
 		leftSibling.keys = new ArrayList<K>(keys.subList(0, mid));
