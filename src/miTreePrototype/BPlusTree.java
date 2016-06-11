@@ -97,8 +97,9 @@ public class BPlusTree<K extends Comparable<K>, V> {
 			//root = ((InnerNode<K,V>)root).getChild(0); //tu bedzie pageNumber
 			
 			rootNode = ((InnerNode<K,V>)rootNode).getChild(0, height, pageManager);
-			rootNode.doubleOrder();
 			setHeight(height - 1);
+			rootNode.setOrder(Math.max(3, ORDER / (int)Math.pow(2, height - 1) ));
+			
 			pageManager.writeNodeToPage(rootNode, newPageID, height);
 		}
 		//checkForErrors(); //DEBUG
