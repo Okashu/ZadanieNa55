@@ -68,7 +68,11 @@ public class BPlusTree<K extends Comparable<K>, V> {
 			pageManager.writeNodeToPage(rootNode, newPageID, height);
 		}
 	}
-	
+	public void insertNodeValue(K nodeKey,V value){
+		int newPageID = pageManager.allocateNewPage();
+		root = newPageID;
+		pageManager.getNodeFromPage(root,height).insertNodeValue(nodeKey, value, newPageID, pageManager, height);
+	}
 	public V retrieve(K key){
 		LeafNode<K,V> leaf = searchForNode(key);
 		if(leaf != null){
