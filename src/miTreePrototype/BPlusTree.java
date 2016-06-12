@@ -1,6 +1,12 @@
 package miTreePrototype;
 
-
+/**
+ * Klasa centralna drzewa, obs³uguje wszystkie zapytania programu.
+ * @author Adam
+ *
+ * @param <K> Typ s³u¿¹cy za klucze w drzewie. Musi implementowaæ Comparable.
+ * @param <V> Typ s³u¿¹cy za wartoœci w drzewie.
+ */
 public class BPlusTree<K extends Comparable<K>, V> {
 	
 	private int root;
@@ -10,8 +16,8 @@ public class BPlusTree<K extends Comparable<K>, V> {
 	public PageManager<K, V> pageManager;
 
 	/**Tworzy nowe drzewo o zadanych parametrach
-	 * @param order
-	 * @param pageSize
+	 * @param order Maksymalna liczba kluczy w drzewie.
+	 * @param pageSize Rozmiar strony w drzewie.
 	 */
 	public BPlusTree(int order, int pageSize) {
 		if (order < 3){
@@ -34,6 +40,8 @@ public class BPlusTree<K extends Comparable<K>, V> {
 	}
 	/**
 	 * zwraca wyskoœæ drzewa
+	 * 
+	 * @return wysokoœæ drzewa
 	 */
 	public int getHeight(){ return height; }
 	
@@ -51,6 +59,10 @@ public class BPlusTree<K extends Comparable<K>, V> {
 		return (LeafNode<K, V>)node;
 	}
 	
+	/**Wyszukuje wêze³ z danym kluczem
+	 * @param key klucz
+	 * @return liœæ, wtedy i tylko wtedy gdy znajduje siê w nim klucz
+	 */
 	private Node<K,V> find(K key){
 		LeafNode<K,V> leaf = searchForNode(key);
 		if(leaf != null){

@@ -4,10 +4,10 @@ import java.util.*;
 
 /**
  * Klasa abstrakcyjna węzłów drzewa.
- * @param <K> Typ kluczy (musi implementować Comarable<K>).
+ * @param <K> Typ kluczy (musi implementować Comparable<K>).
  * @param <V> Typ wartości.
  */
-
+ 
 public abstract class Node<K extends Comparable<K>, V> implements java.io.Serializable {
 
 	protected int ORDER;
