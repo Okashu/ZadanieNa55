@@ -9,7 +9,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 
-/*
+/**
  * Klasa specjalnych stron pamiêci. Ka¿da z nich przechowuje jedn¹ zmienn¹ typu V i nic wiêcej.
  * (w przeciwieñstwie do normalnych MemoryPage, które przechowuj¹ po kilka Node'ów)
  */
