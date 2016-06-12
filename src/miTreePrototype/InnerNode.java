@@ -90,6 +90,7 @@ public class InnerNode<K extends Comparable<K>, V> extends Node<K, V> implements
 	public void dump(String prefix, int myLevel, PageManager<K, V> pageManager, int myPageID) {
 		System.out.println(prefix + "Inner Node on page " + myPageID + " - order: " + ORDER);
 		for(int i=0; i<pageIDs.size(); i++){
+			pageManager.setPageUsed(pageIDs.get(i));
 			getChild(i, myLevel, pageManager).dump(prefix + "    ", myLevel - 1, pageManager, pageIDs.get(i));
 			if(i<keys.size()){
 				System.out.println(prefix + "+Key: " + keys.get(i));

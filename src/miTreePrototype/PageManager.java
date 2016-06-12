@@ -7,7 +7,7 @@ public class PageManager<K extends Comparable<K>, V> {
 	private int pageSize;
 	private int treeHeight;
 	private List<MemoryPage<K, V>> pageList;
-	private int usedPages=0;
+	private boolean[] isPageUsed;
 	
 	public int allocateNewPage(){
 		int newPageID = pageList.size();
@@ -62,17 +62,29 @@ public class PageManager<K extends Comparable<K>, V> {
 	public void writeNodeToPage(Node<K, V> node, int pageID, int level){
 		pageList.get(pageID).write(node, level, treeHeight);
 	}
-	public void addUsedPage(int i){
-		usedPages+=i;
+	public void setPageUsed(int pageID){
+		isPageUsed[pageID] = true;
 	}
-	public int getUsedPages(){
-		return usedPages;
+	public int getUsedPageCount(){
+		int used = 0;
+		for(boolean b : isPageUsed){
+			if(b){
+				used++;
+			}
+		}
+		return used;
 	}
 	public int getUnUsedPageCount(){
-		return pageList.size()-usedPages;
+		int unused = 0;
+		for(boolean b: isPageUsed){
+			if(!b){
+				unused++;
+			}
+		}
+		return unused;
 	}
 	public void resetUsedPagesCount(){
-		usedPages=0;
+		isPageUsed = new boolean[pageList.size()];
 	}
 	
 }
