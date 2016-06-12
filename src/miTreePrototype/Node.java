@@ -2,6 +2,11 @@ package miTreePrototype;
 
 import java.util.*;
 
+/** Klasa wêz³ów drzewa 
+ *
+ * @param <K> typ kluczy
+ * @param <V> typ wartoœci
+ */
 public abstract class Node<K extends Comparable<K>, V> implements java.io.Serializable {
 
 	protected int ORDER;
@@ -52,11 +57,22 @@ public abstract class Node<K extends Comparable<K>, V> implements java.io.Serial
 		return keys.size() < (Math.ceil((double) (ORDER + 1) / 2));
 	}
 
+	/**
+	 * @return czy mo¿e po¿yczyæ klucz
+	 */
 	public boolean canLendAKey() {
 		return keys.size() > Math.ceil((double) (ORDER + 1) / 2);
 	}
 
-	// zwraca true, jesli zmieniono ilosc kluczy rodzica
+	
+	/**Metoda zajmuje siê ³¹czeniem wêz³ów
+	 * @param parent wêze³ rodzic
+	 * @param childIndex 
+	 * @param pageID identyfikator nowej strony
+	 * @param pageManager
+	 * @param currentLevel aktualny poziom
+	 * @return  zwraca true, jesli zmieniono ilosc kluczy rodzica
+	 */
 	public boolean handleMerger(InnerNode<K, V> parent, int childIndex, int pageID, PageManager<K, V> pageManager,
 			int currentLevel) {
 		if (parent == null) {
@@ -204,6 +220,15 @@ public abstract class Node<K extends Comparable<K>, V> implements java.io.Serial
 	 */
 	public abstract Split<K, V> split();
 
+	/**Usuwa dan¹ wartoœæ z drzewa
+	 * @param key klucz zwi¹zany z wartoœci¹
+	 * @param parent nadrzêdny wêze³
+	 * @param childIndex 
+	 * @param pageID identyfikator nowej strony
+	 * @param pageManager
+	 * @param currentLevel aktualny poziom
+	 * @return zmieni³a siê iloœæ kluczy w rodzicu
+	 */
 	public abstract boolean remove(K key, InnerNode<K, V> parent, int childIndex, int pageID,
 			PageManager<K, V> pageManager, int currentLevel);	// przekazuje
 															 	// rodzica, aby
