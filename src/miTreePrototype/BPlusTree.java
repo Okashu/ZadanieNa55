@@ -51,6 +51,10 @@ public class BPlusTree<K extends Comparable<K>, V> {
 		return (LeafNode<K, V>)node;
 	}
 	
+	/**Wyszukuje wêze³ z danym kluczem
+	 * @param key klucz
+	 * @return liœæ, wtedy i tylko wtedy gdy znajduje siê w nim klucz
+	 */
 	private Node<K,V> find(K key){
 		LeafNode<K,V> leaf = searchForNode(key);
 		if(leaf != null){
