@@ -122,7 +122,7 @@ public class InnerNode<K extends Comparable<K>, V> extends Node<K, V> implements
 		}
 		for(int i=0; i<pageIDs.size(); i++){
 			pageManager.setPageUsed(pageIDs.get(i));
-			getChild(i, currentLevel, pageManager).dump(prefix + "    ", currentLevel - 1, pageManager, pageIDs.get(i));
+			getChild(i, currentLevel, pageManager).dump(prefix + "    ", pageIDs.get(i), pageManager, currentLevel - 1);
 			if(i<keys.size()){
 				System.out.println(prefix + "+Key: " + keys.get(i));
 			}
