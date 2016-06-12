@@ -168,11 +168,8 @@ public class MemoryPage<K extends Comparable<K>, V> {
 			in.skip(offset);
 			ObjectInputStream reader = new ObjectInputStream(in);
 			
-			//reader.skipBytes(offset);
 			node = (Node<K, V>)reader.readObject();
-			//System.out.println(node.toString());
-			//System.out.println(node.getClass().toString());
-			//System.out.println(node.pageIDs);
+			
 			in.close();
 		} catch (IOException e) {
 			System.out.println("ERROR: IOException while reading offset: " + offset + " in file " + fileName);

@@ -25,6 +25,7 @@ public class BPlusTree<K extends Comparable<K>, V> {
 		this.height = height;
 		pageManager.setTreeHeight(height);
 	}
+	
 	public int getHeight(){ return height; }
 	
 	private LeafNode<K,V> searchForNode(K key){
@@ -68,16 +69,21 @@ public class BPlusTree<K extends Comparable<K>, V> {
 			pageManager.writeNodeToPage(rootNode, newPageID, height);
 		}
 	}
+	
 	public void insertNodeValue(K nodeKey,V value){
 		int newPageID = pageManager.allocateNewPage();
-		root = newPageID;
-		pageManager.getNodeFromPage(root,height).insertNodeValue(nodeKey, value, newPageID, pageManager, height);
+		if(pageManager.getNodeFromPage(root, height).insertNodeValue(nodeKey, value, newPageID, pageManager, height)){
+			root = newPageID;
+		}
 	}
+	
 	public void deleteNodeValue(K nodeKey,V value){
 		int newPageID = pageManager.allocateNewPage();
-		root = newPageID;
-		pageManager.getNodeFromPage(root,height).deleteNodeValue(nodeKey, value, newPageID, pageManager, height);
+		if(pageManager.getNodeFromPage(root, height).deleteNodeValue(nodeKey, value, newPageID, pageManager, height)){
+			root = newPageID;
+		}
 	}
+	
 	public V retrieve(K key){
 		LeafNode<K,V> leaf = searchForNode(key);
 		if(leaf != null){
