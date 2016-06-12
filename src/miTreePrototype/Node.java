@@ -210,10 +210,27 @@ public abstract class Node<K extends Comparable<K>, V> implements java.io.Serial
 																// miec dostep
 																// do braci
 
+	/**£¹czy dwa wêz³y
+	 * @param mergingNode wêze³ z którym siê ³¹czymy
+	 * @param mergeToLeft czy po¿ycza od lewego
+	 * @param splitKey klucz dziel¹cy wêz³y
+	 */
 	abstract protected void mergeWith(Node<K, V> mergingNode, boolean mergeToLeft, K splitKey);
 
+	/**porzycza klucze od wskazanego s¹siada
+	 * @param lender wskazany s¹siad
+	 * @param borrowFromLeft czy po¿ycza od lewego
+	 * @param splitKey klucz dziel¹cy wêz³y
+	 * @return klucz 
+	 */
 	abstract protected K borrowKeys(Node<K, V> lender, boolean borrowFromLeft, K splitKey);
 
+	/**Wypisuje wartoœci z drzewa
+	 * @param prefix prefix znajduj¹cy siê przed wypisywanymi wartoœciami
+	 * @param myLevel poziom wêz³a
+	 * @param pageManager 
+	 * @param myPageID numer identyfikacyjny strony
+	 */
 	abstract public void dump(String prefix, int myLevel, PageManager<K, V> pageManager, int myPageID);
 
 	// abstract public void checkForErrors(boolean root); //DEBUG
