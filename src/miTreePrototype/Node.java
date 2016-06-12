@@ -8,11 +8,17 @@ public abstract class Node<K extends Comparable<K>, V> implements java.io.Serial
 	public List<K> keys;
 	public List<Integer> pageIDs;
 	public List<V> nodeValueList;
-	
+
+	/**Ustawia rz¹d wêz³a
+	 * @param order rz¹d wêz³a
+	 */
 	public void setOrder(int order){
 		this.ORDER = order;
 	}
 
+	/**Tworzy nowy wêze³ drzewa
+	 * @param order rz¹d wêz³a
+	 */
 	Node(int order) {
 		ORDER = order;
 		keys = new ArrayList<K>(ORDER);
@@ -20,6 +26,10 @@ public abstract class Node<K extends Comparable<K>, V> implements java.io.Serial
 		nodeValueList = new ArrayList<V>(1);
 	}
 
+	/**Zwraca indeks danego klucza
+	 * @param key klucz
+	 * @return indekst klucza
+	 */
 	public int getKeyLocation(K key) {
 		int i = 0;
 		while (i < keys.size() && keys.get(i).compareTo(key) <= 0) {
@@ -28,10 +38,16 @@ public abstract class Node<K extends Comparable<K>, V> implements java.io.Serial
 		return i;
 	}
 
+	/**
+	 * @return true jeœli wymagany jest split
+	 */
 	public boolean needsToBeSplit() {
 		return keys.size() > ORDER;
 	}
 
+	/**
+	 * @return true jeœli nale¿y po³¹czyæ dwa wêz³y 
+	 */
 	public boolean needsToBeMerged() {
 		return keys.size() < (Math.ceil((double) (ORDER + 1) / 2));
 	}
@@ -106,6 +122,15 @@ public abstract class Node<K extends Comparable<K>, V> implements java.io.Serial
 		return false;
 	}
 
+
+	/**dodaje dan¹ wartoœæ do tego wêz³a, wartoœæ nie jest zwi¹zana z drzewem
+	 * @param key klucz szukanego wêz³a
+	 * @param value dodawana wartoœæ
+	 * @param pageID identyfikator nowej strony
+	 * @param pageManager Menadzer stron
+	 * @param currentLevel poziom aktualnego wêz³a
+	 * @return true jeœli dodano wartoœæ do jakiegoœ wêz³a
+	 */
 	public boolean insertNodeValue(K key, V value, int pageID, PageManager<K, V> pageManager, int currentLevel) {
 		int i = getKeyLocation(key);
 		if (i > 0 && keys.get(i-1).compareTo(key) == 0){ // czy drzewo zawiera dany klucz
@@ -126,6 +151,15 @@ public abstract class Node<K extends Comparable<K>, V> implements java.io.Serial
 		}
 	}
 	
+
+	/**usuwa dan¹ wartoœæ z tego wêz³a, wartoœæ nie jest zwi¹zana z drzewem
+	 * @param key klucz szukanego wêz³a
+	 * @param value dodawana wartoœæ
+	 * @param pageID identyfikator nowej strony
+	 * @param pageManager Menadzer stron
+	 * @param currentLevel poziom aktualnego wêz³a
+	 * @return true jeœli usuniêto wartoœæ z jakiegoœ wêz³a
+	 */
 	public boolean deleteNodeValue(K key, V value, int pageID, PageManager<K, V> pageManager, int currentLevel) {
 		int i = getKeyLocation(key);
 		if (i > 0 && keys.get(i-1).compareTo(key) == 0){ // czy drzewo zawiera dany klucz
@@ -146,6 +180,10 @@ public abstract class Node<K extends Comparable<K>, V> implements java.io.Serial
 		}
 	}
 
+
+	/**
+	 * Wypisuje wartoœci trzymane w node
+	 */
 	public void writeNodeValues() {
 		for (int i = 0; i < nodeValueList.size(); i++)
 			System.out.print(nodeValueList.get(i).toString() + " ");

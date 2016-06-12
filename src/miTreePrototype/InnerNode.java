@@ -4,16 +4,24 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 
+/**
+ * Klasa wewnêtrznych wêz³ów drzewa, nie przechowuj¹ wartoœci lecz wskazania na kolejne wêz³y drzewa
+ * @param <K> typ kluczy
+ * @param <V> typ wartoœci
+ */
 public class InnerNode<K extends Comparable<K>, V> extends Node<K, V> implements Serializable {
 
 	
+	/**
+	 * @param order
+	 */
 	public InnerNode(int order) {
 		super(order);
 		pageIDs = new ArrayList<Integer>(ORDER+1);
 	}
 	
-	//powoduje zmniejszenie minimalnego rozmiaru inner-node'Ã³w, zapobiega to
-	//przepeÅ‚nianiu drzewa przy poÅ¼yczaniu kluczy od braci
+	//powoduje zmniejszenie minimalnego rozmiaru inner-node'ów, zapobiega to
+	//przepe³nianiu drzewa przy poÅ¼yczaniu kluczy od braci
 	public boolean canLendAKey(){
 		return keys.size() > Math.ceil((double)(ORDER+1)/2-1);
 	}
