@@ -115,6 +115,7 @@ public class InnerNode<K extends Comparable<K>, V> extends Node<K, V> implements
 
 	public void dump(String prefix, int pageID, PageManager<K, V> pageManager, int currentLevel) {
 		System.out.println(prefix + "Inner Node on page " + pageID + " - order: " + ORDER);
+		pageManager.setPageUsed(pageID);
 		if(!nodeValueList.isEmpty()){
 			System.out.print(prefix + "Extra values: ");
 			writeNodeValues();
