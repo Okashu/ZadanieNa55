@@ -4,13 +4,29 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 
-
+/**
+ * Klasa Node'ów, które znajduj¹ siê na samym dole drzewa.
+ * Strony odpowiadaj¹ce ich kluczom przechowuj¹ nie Node'y, ale wartoœci.
+ *
+ * @param <K> Typ s³u¿¹cy za klucz w Nodzie (musi implementowaæ Comparable).
+ * @param <V> Typ s³u¿¹cy za wartoœæ w Nodzie.
+ */
 public class LeafNode<K extends Comparable<K>, V> extends Node<K, V> implements Serializable {
 
+	/**
+	 * Tworzy pusty LeafNode o zadanej maksymalnej liczbie kluczy.
+	 * @param order Maksymalna liczba kluczy w Nodzie.
+	 */
 	public LeafNode(int order) {
 		super(order);
 	}
 	
+	/**
+	 * Zwraca wartoœæ przechowywan¹ we wskazanym miejscu w Nodzie.
+	 * @param index Miejsce w nodzie, które ma byæ odczytane.
+	 * @param pageManager Manager stron u¿ywany w programie.
+	 * @return
+	 */
 	public V getValue(int index, PageManager<K, V> pageManager){
 		MemoryPage<K, V> memoryPage = pageManager.getPage(pageIDs.get(index));
 		if(! (memoryPage instanceof ValuePage)){
@@ -21,7 +37,11 @@ public class LeafNode<K extends Comparable<K>, V> extends Node<K, V> implements 
 		return valuePage.readValue();
 	}
 	
-	// zwraca dokladna lokalizacje klucza, -1 gdy liÅ›Ä‡ go nie posiada
+	/**
+	 * Szuka, gdzie w Nodzie znajduje siê dany klucz.
+	 * @param key Klucz, który ma byæ znaleziony.
+	 * @return Miejsce, gdzie znajduje siê klucz. -1, jeœli nie ma takiego klucza.
+	 */
 	public int getExactKeyLocation(K key){
 		int i = getKeyLocation(key);
 		if (i>0 && i<=keys.size() && keys.get(i-1).equals(key)){
@@ -30,7 +50,17 @@ public class LeafNode<K extends Comparable<K>, V> extends Node<K, V> implements 
 			return -1;
 		}
 	}
-	
+	/**
+	 * Wstawia zadan¹ parê K, V w tego Node'a
+	 * 
+	 * @param K Klucz odpowiadaj¹cy danej wartoœci.
+	 * @param V Wartoœæ do wstawienia do Node'a.
+	 * @param pageID Numer strony pamiêci, na któr¹ ma byæ zapisany Node po zmianach.
+	 * @param pageManagaer Manager stron u¿ywany w programie.
+	 * @param currentLevel Obecny poziom wywo³ania rekurencyjnego (w tym momencie powinien zawsze byæ równy 1, bo poziom liœcia jest zawsze równy 1).
+	 * 
+	 * @return obiekt typu Split, zawieraj¹cy informacje o Node'ach, na które nast¹pi³ podzia³
+	 */
 	public Split<K, V> insert(K key, V value, int pageID, PageManager<K, V> pageManager, int currentLevel){
 		if(keys.size() == 0){
 			keys.add(key);
@@ -63,6 +93,10 @@ public class LeafNode<K extends Comparable<K>, V> extends Node<K, V> implements 
 		}
 	}
 
+	/**
+	 * Dzieli Node'a na dwa nowe Node'y. U¿ywane, kiedy brakuje miejsca w Nodzie.
+	 * @return Obiekt typu Split zawieraj¹cy informacje o Node'ach, na które siê podzieli³ ten Node.
+	 */
 	public Split<K, V> split() {
 		int mid = (int)Math.ceil((double)keys.size()/2);
 		LeafNode<K,V> rightSibling = new LeafNode<K,V>(ORDER);
@@ -74,6 +108,12 @@ public class LeafNode<K extends Comparable<K>, V> extends Node<K, V> implements 
 		
 		return new Split<K,V>(rightSibling.keys.get(0), this, rightSibling);
 	}
+	/**
+	 * Dzia³a podobnie jak split(), ale jest wywo³ywane, kiedy wysokoœæ drzewa jest równa 1. Liœæ dzieli siê na dwa, ale o mniejszym rozmiarze.
+	 * Wynika to ze struktury miTree.
+	 * 
+	 * @return Obiekt typu Split zawieraj¹cy informacje o Node'ach (2 razy mniejszych), na które siê podzieli³ ten Node.
+	 */
 	public Split<K, V> splitAsRoot(){
 		int mid = (int)Math.ceil((double)keys.size()/2);
 		LeafNode<K, V> leftSibling = new LeafNode<K, V>(Math.max(3, ORDER/2));
@@ -86,6 +126,13 @@ public class LeafNode<K extends Comparable<K>, V> extends Node<K, V> implements 
 		return new Split<K,V>(rightSibling.keys.get(0), leftSibling, rightSibling);
 	}
 
+	/**
+	 * Wypisuje zawartoœæ tego Node'a
+	 * 
+	 * @param prefix Tekst dodawany przed ka¿d¹ lini¹ tekstu.
+	 * @param myLevel Poziom tego Node'a (tutaj powinien byæ zawsze 1, bo jest liœciem).
+	 * @param myPageID Numer strony, na której znajduje siê ten Node.
+	 */
 	public void dump(String prefix, int myLevel, PageManager<K, V> pageManager, int myPageID) {
 		System.out.println(prefix + "Leaf Node on page " + myPageID + " - order: "+ ORDER);
 		pageManager.setPageUsed(myPageID);
@@ -99,6 +146,7 @@ public class LeafNode<K extends Comparable<K>, V> extends Node<K, V> implements 
 			System.out.println(prefix + getValue(i, pageManager).toString()+ " - value on page " + pageIDs.get(i));
 		}
 	}
+
 
 	public boolean remove(K key, InnerNode<K,V> parent, int childIndex, int pageID, PageManager<K, V> pageManager, int currentLevel) {
 		int i = getExactKeyLocation(key);
