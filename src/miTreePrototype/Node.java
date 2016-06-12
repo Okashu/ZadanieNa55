@@ -2,8 +2,6 @@ package miTreePrototype;
 
 import java.util.*;
 
-
-
 public abstract class Node<K extends Comparable<K>, V> implements java.io.Serializable {
 
 	protected int ORDER;
@@ -23,6 +21,7 @@ public abstract class Node<K extends Comparable<K>, V> implements java.io.Serial
 		ORDER = order;
 		keys = new ArrayList<K>(ORDER);
 		pageIDs = new ArrayList<Integer>(ORDER + 1);
+		nodeValueList = new ArrayList<V>(1);
 	}
 
 	public int getKeyLocation(K key) {
@@ -111,63 +110,49 @@ public abstract class Node<K extends Comparable<K>, V> implements java.io.Serial
 		return false;
 	}
 
-	public void insertNodeValue(K key, V value, int pageID, PageManager<K, V> pageManager, int currentLevel) {
-		int i = 0;
-		int compare=0;
-		while (i < keys.size() && (compare=keys.get(i).compareTo(key)) < 0) {
-			i++;
-		}
-		if (compare==0) {			//pierwszy napotkany node z takim kluczem
+	public boolean insertNodeValue(K key, V value, int pageID, PageManager<K, V> pageManager, int currentLevel) {
+		int i = getKeyLocation(key);
+		if (i > 0 && keys.get(i-1).compareTo(key) == 0){ // czy drzewo zawiera dany klucz
 			nodeValueList.add(value);
-			rewrite(pageID, pageManager, currentLevel);
-		} else if(i<keys.size()){
-			if(this instanceof InnerNode){
-				pageIDs.set(i, pageID);
-				pageManager.writeNodeToPage(this, pageID, currentLevel);
-				pageManager.getNodeFromPage(pageIDs.get(i), currentLevel - 1).insertNodeValue(key, value, pageID,
-					pageManager, currentLevel - 1);
-			}else
-				pageManager.writeNodeToPage(this, pageID, currentLevel);
+			pageManager.writeNodeToPage(this, pageID, currentLevel);
+			return true;
+		} else {
+			if (this instanceof InnerNode){
+				boolean gotInserted = pageManager.getNodeFromPage(pageIDs.get(i), currentLevel - 1).insertNodeValue(key, value,
+						pageID, pageManager, currentLevel - 1);
+				if(gotInserted){
+					pageIDs.set(i, pageID);
+					pageManager.writeNodeToPage(this, pageID, currentLevel);
+				}
+				return gotInserted;
+			}
+			return false;
 		}
 	}
-	public void deleteNodeValue(K key, V value, int pageID, PageManager<K, V> pageManager, int currentLevel) {
-		int i = 0;
-		int compare=0;
-		while (i < keys.size() && (compare=keys.get(i).compareTo(key)) < 0) {
-			i++;
-		}
-		if (compare==0) {			//pierwszy napotkany node z takim kluczem
+	
+	public boolean deleteNodeValue(K key, V value, int pageID, PageManager<K, V> pageManager, int currentLevel) {
+		int i = getKeyLocation(key);
+		if (i > 0 && keys.get(i-1).compareTo(key) == 0){ // czy drzewo zawiera dany klucz
 			nodeValueList.remove(value);
-			rewrite(pageID, pageManager, currentLevel);
-		} else if(i<keys.size()){
-			if(this instanceof InnerNode){
-				pageIDs.set(i, pageID);
-				pageManager.writeNodeToPage(this, pageID, currentLevel);
-				pageManager.getNodeFromPage(pageIDs.get(i), currentLevel - 1).deleteNodeValue(key, value, pageID,
-					pageManager, currentLevel - 1);
-			}else
-				pageManager.writeNodeToPage(this, pageID, currentLevel);
+			pageManager.writeNodeToPage(this, pageID, currentLevel);
+			return true;
+		} else {
+			if (this instanceof InnerNode){
+				boolean gotDeleted = pageManager.getNodeFromPage(pageIDs.get(i), currentLevel - 1).deleteNodeValue(key, value,
+						pageID, pageManager, currentLevel - 1);
+				if(gotDeleted){
+					pageIDs.set(i, pageID);
+					pageManager.writeNodeToPage(this, pageID, currentLevel);
+				}
+				return gotDeleted;
+			}
+			return false;
 		}
-	}
-
-	private void rewrite(int pageID, PageManager<K, V> pageManager, int currentLevel) {
-		if (this instanceof InnerNode) {
-			pageIDs.set(0, pageID);
-			pageManager.writeNodeToPage(this, pageID, currentLevel);
-			Node<K, V> node = pageManager.getNodeFromPage(pageIDs.get(0), currentLevel - 1);
-			node.rewrite(pageID, pageManager, currentLevel - 1);
-		}else
-			pageManager.writeNodeToPage(this, pageID, currentLevel);
 	}
 
 	public void writeNodeValues() {
 		for (int i = 0; i < nodeValueList.size(); i++)
-			System.out.println(nodeValueList.get(i).toString());
-	}
-
-	public boolean deleteNodeValue(V value) {
-		//TODO
-		return false;
+			System.out.print(nodeValueList.get(i).toString() + " ");
 	}
 
 	public abstract Split<K, V> insert(K key, V value, int pageID, PageManager<K, V> pageManager, int currentLevel);
@@ -175,8 +160,8 @@ public abstract class Node<K extends Comparable<K>, V> implements java.io.Serial
 	public abstract Split<K, V> split();
 
 	public abstract boolean remove(K key, InnerNode<K, V> parent, int childIndex, int pageID,
-			PageManager<K, V> pageManager, int currentLevel); // przekazuje
-																// rodzica, aby
+			PageManager<K, V> pageManager, int currentLevel);	// przekazuje
+															 	// rodzica, aby
 																// miec dostep
 																// do braci
 
