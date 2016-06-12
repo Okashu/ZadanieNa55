@@ -2,9 +2,11 @@ package miTreePrototype;
 
 
 /**
- * Klasa odpowiada obs³ugê dzielania siê wêz³ów na dwa
- * @param <K> typ kluczy w wêzle
- * @param <V> typ wartoœci w wêzle
+ * Klasa przechowuj¹ca informacjê o podziale dwóch wêz³ów.
+ * U¿ywana w trakcie dodawania elementów do drzewa.
+ * 
+ * @param <K> Typ s³u¿¹cy za klucze w drzewie. Musi implementowaæ Comparable.
+ * @param <V> Typ s³u¿¹cy za wartoœci w drzewie.
  */
 public class Split<K extends Comparable<K>, V> {
 	
@@ -12,10 +14,11 @@ public class Split<K extends Comparable<K>, V> {
 	public final Node <K, V> left;
 	public final Node <K, V> right;
 
-	/**tworzy nowy obiekt split
-	 * @param key klucz miêdzy wêz³ami
-	 * @param left lewy wêze³
-	 * @param right prawy wêze³
+	/**
+	 * Tworzy nowy obiekt Split.
+	 * @param key Klucz oddzielaj¹cy nowo powasta³e wêz³y.
+	 * @param left Lewy wêze³.
+	 * @param right Prawy wêze³.
 	 */
 	public Split(K key, Node <K, V> left, Node <K, V> right) {
 		this.key = key;

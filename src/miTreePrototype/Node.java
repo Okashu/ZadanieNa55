@@ -4,8 +4,9 @@ import java.util.*;
 
 /**
  * Klasa abstrakcyjna węzłów drzewa.
- * @param <K> Typ kluczy (musi implementować Comparable<K>).
- * @param <V> Typ wartości.
+ * 
+ * @param <K> Typ służący za klucze w drzewie. Musi implementować Comparable.
+ * @param <V> Typ służący za wartości w drzewie.
  */
  
 public abstract class Node<K extends Comparable<K>, V> implements java.io.Serializable {

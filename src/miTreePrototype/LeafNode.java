@@ -5,26 +5,26 @@ import java.util.ArrayList;
 
 
 /**
- * Klasa Node'ów, które znajduj¹ siê na samym dole drzewa.
- * Strony odpowiadaj¹ce ich kluczom przechowuj¹ nie Node'y, ale wartoœci.
- *
- * @param <K> Typ s³u¿¹cy za klucz w Nodzie (musi implementowaæ Comparable).
- * @param <V> Typ s³u¿¹cy za wartoœæ w Nodzie.
+ * Klasa wêz³ów, które znajduj¹ siê na samym dole drzewa.
+ * Strony odpowiadaj¹ce ich kluczom przechowuj¹ nie wêz³y, ale wartoœci.
+ * 
+ * @param <K> Typ s³u¿¹cy za klucze w drzewie. Musi implementowaæ Comparable.
+ * @param <V> Typ s³u¿¹cy za wartoœci w drzewie.
  */
 public class LeafNode<K extends Comparable<K>, V> extends Node<K, V> implements Serializable {
 
 	/**
 	 * Tworzy pusty LeafNode o zadanej maksymalnej liczbie kluczy.
-	 * @param order Maksymalna liczba kluczy w Nodzie.
+	 * @param order Maksymalna liczba kluczy w wêŸle.
 	 */
 	public LeafNode(int order) {
 		super(order);
 	}
 	
 	/**
-	 * Zwraca wartoœæ przechowywan¹ we wskazanym miejscu w Nodzie.
-	 * @param index Miejsce w nodzie, które ma byæ odczytane.
-	 * @param pageManager Manager stron u¿ywany w programie.
+	 * Zwraca wartoœæ przechowywan¹ na wskazanym indeksie w wêŸle.
+	 * @param index Indeks wartoœci w wêŸle.
+	 * @param pageManager Menad¿er stron drzewa.
 	 * @return
 	 */
 	public V getValue(int index, PageManager<K, V> pageManager){
@@ -38,7 +38,7 @@ public class LeafNode<K extends Comparable<K>, V> extends Node<K, V> implements 
 	}
 	
 	/**
-	 * Szuka, gdzie w Nodzie znajduje siê dany klucz.
+	 * Szuka, gdzie w wêŸle znajduje siê dany klucz.
 	 * @param key Klucz, który ma byæ znaleziony.
 	 * @return Miejsce, gdzie znajduje siê klucz. -1, jeœli nie ma takiego klucza.
 	 */
@@ -50,17 +50,7 @@ public class LeafNode<K extends Comparable<K>, V> extends Node<K, V> implements 
 			return -1;
 		}
 	}
-	/**
-	 * Wstawia zadan¹ parê K, V w tego Node'a
-	 * 
-	 * @param K Klucz odpowiadaj¹cy danej wartoœci.
-	 * @param V Wartoœæ do wstawienia do Node'a.
-	 * @param pageID Numer strony pamiêci, na któr¹ ma byæ zapisany Node po zmianach.
-	 * @param pageManagaer Manager stron u¿ywany w programie.
-	 * @param currentLevel Obecny poziom wywo³ania rekurencyjnego (w tym momencie powinien zawsze byæ równy 1, bo poziom liœcia jest zawsze równy 1).
-	 * 
-	 * @return obiekt typu Split, zawieraj¹cy informacje o Node'ach, na które nast¹pi³ podzia³
-	 */
+
 	public Split<K, V> insert(K key, V value, int pageID, PageManager<K, V> pageManager, int currentLevel){
 		if(keys.size() == 0){
 			keys.add(key);
@@ -93,10 +83,6 @@ public class LeafNode<K extends Comparable<K>, V> extends Node<K, V> implements 
 		}
 	}
 
-	/**
-	 * Dzieli Node'a na dwa nowe Node'y. U¿ywane, kiedy brakuje miejsca w Nodzie.
-	 * @return Obiekt typu Split zawieraj¹cy informacje o Node'ach, na które siê podzieli³ ten Node.
-	 */
 	public Split<K, V> split() {
 		int mid = (int)Math.ceil((double)keys.size()/2);
 		LeafNode<K,V> rightSibling = new LeafNode<K,V>(ORDER);
@@ -110,10 +96,11 @@ public class LeafNode<K extends Comparable<K>, V> extends Node<K, V> implements 
 	}
 
 	/**
-	 * Dzia³a podobnie jak split(), ale jest wywo³ywane, kiedy wysokoœæ drzewa jest równa 1. Liœæ dzieli siê na dwa, ale o mniejszym rozmiarze.
+	 * Dzia³a podobnie jak split(), ale jest wywo³ywane, kiedy
+	 * wysokoœæ drzewa jest równa 1.
+	 * Liœæ dzieli siê na dwa, ale o mniejszym rozmiarze.
 	 * Wynika to ze struktury miTree.
-	 * 
-	 * @return Obiekt typu Split zawieraj¹cy informacje o Node'ach (2 razy mniejszych), na które siê podzieli³ ten Node.
+	 * @return Dane o podziale wêz³a.
 	 */
 	public Split<K, V> splitAsRoot(){
 		int mid = (int)Math.ceil((double)keys.size()/2);
@@ -182,14 +169,5 @@ public class LeafNode<K extends Comparable<K>, V> extends Node<K, V> implements 
 		
 		return (borrowFromLeft) ? this.keys.get(0) : lender.keys.get(0);
 	}
-
-	//DEBUG
-	/*public void checkForErrors(boolean root) {
-		for(int i=0; i<keys.size(); i++){
-			if (keys.get(i) == null){
-				System.out.println("cos sie znullowalo w lisciu");
-			}
-		}
-	}*/
 
 }
