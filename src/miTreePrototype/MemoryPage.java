@@ -9,10 +9,20 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
+/**
+ * Klasa zajmuje siê obs³ug¹ strony pamieci.
+ * Ka¿da strona to plik binarny zapisywany w folderze memoryPages
+ * @param <K> typ kluczy
+ * @param <V> typ wartosci
+ */
 public class MemoryPage<K extends Comparable<K>, V> {
 	protected int pageSize;
 	protected String fileName;
 
+	/**Tworzy now¹ stronê w nowym pliku binarnym [numer pageID].BIN
+	 * @param pageID numer identyfikacyjny strony
+	 * @param pageSize rozmiar strony
+	 */
 	public MemoryPage(int pageID, int pageSize) {
 		this.pageSize = pageSize;
 		
@@ -40,6 +50,11 @@ public class MemoryPage<K extends Comparable<K>, V> {
 		}
 	}
 
+	/**Zapisuje danego Node na danym poziomie w stronie pamiêci
+	 * @param node node który trzeba zapisac
+	 * @param lvl poziom ma którym go zapisujemy
+	 * @param height wysokoœc drzewa
+	 */
 	public void write(Node<K, V> node, int lvl, int height) {
 		if(this instanceof ValuePage){
 			System.out.println("ERROR: attempt to write node to value page.");
@@ -98,6 +113,11 @@ public class MemoryPage<K extends Comparable<K>, V> {
 
 	}
 
+	/**Zwraca d³ugoœæ serializacji danego obiektu
+	 * @param obj obiekt serializowany
+	 * @return d³ugoœæ serializacji
+	 * @throws IOException 
+	 */
 	protected int serializationLength(Object obj) throws IOException {
 		// zeby poznac dlugosc serializacji
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -106,6 +126,12 @@ public class MemoryPage<K extends Comparable<K>, V> {
 		return out.toByteArray().length;
 	}
 
+	/**zapisuje Node w danym miejscu w pliku
+	 * @param out
+	 * @param node
+	 * @return
+	 * @throws IOException
+	 */
 	private int write(FileOutputStream out, Node<K, V> node) throws IOException {
 		int nodeLength = 0;
 		ObjectOutputStream writer = new ObjectOutputStream(out);
@@ -114,6 +140,12 @@ public class MemoryPage<K extends Comparable<K>, V> {
 		return nodeLength;
 	}
 
+	/**Zapisuje puste miejsca po serializacji 
+	 * by zachowaæ okreœlone wielkoœci poziomów w stronie pamiêci
+	 * @param out
+	 * @param offset
+	 * @throws IOException
+	 */
 	private void write(FileOutputStream out, int offset) throws IOException {
 		if (offset > 0) {			//dla bezpieczenstwa
 			byte[] buf = new byte[offset];
@@ -122,6 +154,10 @@ public class MemoryPage<K extends Comparable<K>, V> {
 
 	}
 	
+	/**Czyta Node z okreœlonego poziomu na stronie pamiêci
+	 * @param offset poziom, iloœæ bitów w pliku przed Nodem 
+	 * @return Zczytany Node
+	 */
 	public Node<K, V> read(int offset) {
 		if(this instanceof ValuePage){
 			throw new IllegalArgumentException();
