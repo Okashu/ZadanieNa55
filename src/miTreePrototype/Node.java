@@ -130,6 +130,25 @@ public abstract class Node<K extends Comparable<K>, V> implements java.io.Serial
 				pageManager.writeNodeToPage(this, pageID, currentLevel);
 		}
 	}
+	public void deleteNodeValue(K key, V value, int pageID, PageManager<K, V> pageManager, int currentLevel) {
+		int i = 0;
+		int compare=0;
+		while (i < keys.size() && (compare=keys.get(i).compareTo(key)) < 0) {
+			i++;
+		}
+		if (compare==0) {			//pierwszy napotkany node z takim kluczem
+			nodeValueList.remove(value);
+			rewrite(pageID, pageManager, currentLevel);
+		} else if(i<keys.size()){
+			if(this instanceof InnerNode){
+				pageIDs.set(i, pageID);
+				pageManager.writeNodeToPage(this, pageID, currentLevel);
+				pageManager.getNodeFromPage(pageIDs.get(i), currentLevel - 1).insertNodeValue(key, value, pageID,
+					pageManager, currentLevel - 1);
+			}else
+				pageManager.writeNodeToPage(this, pageID, currentLevel);
+		}
+	}
 
 	private void rewrite(int pageID, PageManager<K, V> pageManager, int currentLevel) {
 		if (this instanceof InnerNode) {
