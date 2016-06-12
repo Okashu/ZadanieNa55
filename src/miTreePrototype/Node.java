@@ -143,7 +143,7 @@ public abstract class Node<K extends Comparable<K>, V> implements java.io.Serial
 			if(this instanceof InnerNode){
 				pageIDs.set(i, pageID);
 				pageManager.writeNodeToPage(this, pageID, currentLevel);
-				pageManager.getNodeFromPage(pageIDs.get(i), currentLevel - 1).insertNodeValue(key, value, pageID,
+				pageManager.getNodeFromPage(pageIDs.get(i), currentLevel - 1).deleteNodeValue(key, value, pageID,
 					pageManager, currentLevel - 1);
 			}else
 				pageManager.writeNodeToPage(this, pageID, currentLevel);
