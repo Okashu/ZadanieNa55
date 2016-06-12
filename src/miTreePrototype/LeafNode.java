@@ -74,7 +74,8 @@ public class LeafNode<K extends Comparable<K>, V> extends Node<K, V> implements 
 		
 		return new Split<K,V>(rightSibling.keys.get(0), this, rightSibling);
 	}
-	public Split<K, V> splitAsRoot(){
+	
+	public Split<K, V> splitAsRoot() {
 		int mid = (int)Math.ceil((double)keys.size()/2);
 		LeafNode<K, V> leftSibling = new LeafNode<K, V>(Math.max(3, ORDER/2));
 		LeafNode<K,V> rightSibling = new LeafNode<K,V>(Math.max(3, ORDER/2));
@@ -86,9 +87,9 @@ public class LeafNode<K extends Comparable<K>, V> extends Node<K, V> implements 
 		return new Split<K,V>(rightSibling.keys.get(0), leftSibling, rightSibling);
 	}
 
-	public void dump(String prefix, int myLevel, PageManager<K, V> pageManager, int myPageID) {
-		System.out.println(prefix + "Leaf Node on page " + myPageID + " - order: "+ ORDER);
-		pageManager.setPageUsed(myPageID);
+	public void dump(String prefix, int pageID, PageManager<K, V> pageManager, int currentLevel) {
+		System.out.println(prefix + "Leaf Node on page " + pageID + " - order: "+ ORDER);
+		pageManager.setPageUsed(pageID);
 		if(!nodeValueList.isEmpty()){
 			System.out.print(prefix + "Extra values: ");
 			writeNodeValues();

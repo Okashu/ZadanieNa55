@@ -2,22 +2,37 @@ package miTreePrototype;
 
 import java.util.*;
 
+/**
+ * Klasa abstrakcyjna węzłów drzewa.
+ * @param <K> Typ kluczy (musi implementować Comarable<K>).
+ * @param <V> Typ wartości.
+ */
+
 public abstract class Node<K extends Comparable<K>, V> implements java.io.Serializable {
 
 	protected int ORDER;
+	
+	/**
+	 * Klucze węzła.
+	 */
 	public List<K> keys;
+	
+	/**
+	 * Numery stron przechowywane w węźle.
+	 * W przypadku liścia, są to numery z wartościami.
+	 * W przypadku węzła wewnętrznego, są to numery stron,
+	 * na których znajdują się niższe węzły drzewa.
+	 */
 	public List<Integer> pageIDs;
+	
+	/**
+	 * Lista dodatkowych wartości przechowywanych w węźle.
+	 */
 	public List<V> nodeValueList;
 
-	/**Ustawia rz�d w�z�a
-	 * @param order rz�d w�z�a
-	 */
-	public void setOrder(int order){
-		this.ORDER = order;
-	}
-
-	/**Tworzy nowy w�ze� drzewa
-	 * @param order rz�d w�z�a
+	/**
+	 * Tworzy nowy węzeł drzewa o podanym rzędzie (ilości kluczy).
+	 * @param order Rząd węzła.
 	 */
 	Node(int order) {
 		ORDER = order;
@@ -25,10 +40,26 @@ public abstract class Node<K extends Comparable<K>, V> implements java.io.Serial
 		pageIDs = new ArrayList<Integer>(ORDER + 1);
 		nodeValueList = new ArrayList<V>(1);
 	}
+	
+	/**
+	 * Zmienia rząd węzła.
+	 * @param order Nowy rząd węzła.
+	 */
+	public void setOrder(int order){
+		this.ORDER = order;
+	}
 
-	/**Zwraca indeks danego klucza
-	 * @param key klucz
-	 * @return indekst klucza
+	/**
+	 * Zwraca indeks odpowiadający danemu kluczowy.
+	 * Odpowiada on numerowi strony wskazującej na węzeł
+	 * mogący zawierać dany klucz lub wartość odpowiadającą danemu
+	 * kluczowi.
+	 * W szczególności, gdy szukany klucz jest mniejszy od wszystkich
+	 * kluczy (lub równy pierwszemu kluczowi), funkcja zwraca 0.
+	 * W przeciwnym wypadku, funkcja zwraca indeks najmniejszego klucza
+	 * większego od szukanego klucza.
+	 * @param key Szukany klucz.
+	 * @return Indeks odpowiadający kluczowi.
 	 */
 	public int getKeyLocation(K key) {
 		int i = 0;
@@ -39,24 +70,60 @@ public abstract class Node<K extends Comparable<K>, V> implements java.io.Serial
 	}
 
 	/**
-	 * @return true je�li wymagany jest split
+	 * Funkcja sprawdzająca, czy węzeł musi zostać podzielony
+	 * na dwa, tj. czy ilość kluczy jest większa od rzędu
+	 * drzewa.
+	 * @return true, jeśli węzeł musi zostać podzielony.
 	 */
 	public boolean needsToBeSplit() {
 		return keys.size() > ORDER;
 	}
 
 	/**
-	 * @return true je�li nale�y po��czy� dwa w�z�y 
+	 * Funkcja sprwadzająca, czy węzeł musi zostać połączony
+	 * z sąsiadującym węzłem, tj. iłość kluczy w węźle jest
+	 * mniejsza od połowy rzędu drzewa.
+	 * @return true, jeśli musi zostać połączony z sąsiednim.
 	 */
 	public boolean needsToBeMerged() {
 		return keys.size() < (Math.ceil((double) (ORDER + 1) / 2));
 	}
 
+	/**
+	 * Funkcja sprawdzająca, czy węzeł jest w stanie pożyczyć klucz
+	 * sąsiadującemu węzłowi, tj. ilość kluczy jest większa od
+	 * połowy rzędu drzewa.
+	 * @return true, jeśli węzeł może pożyczyć klucz.
+	 */
 	public boolean canLendAKey() {
 		return keys.size() > Math.ceil((double) (ORDER + 1) / 2);
 	}
 
-	// zwraca true, jesli zmieniono ilosc kluczy rodzica
+	/**
+	 * Funkcja zajmująca się łączeniem węzła z sąsiednim, w przypadku
+	 * kiedy podczas usuwania klucza w węźle znajdzie się zbyt mała liczba
+	 * kluczy (jeśli needsToBeMerged() zwraca true).
+	 * 
+	 * Jeśli węzeł nie posiada rodzica (tj. jest rootem), to funkcja nie
+	 * wykonuje niczego.
+	 * 
+	 * Problem zbyt małej liczby kluczy jest rozwiązywany na dwa sposoby:
+	 * <ol>
+	 * <li>Jeśli jeden z sąsiednich węzłów jest w stanie pożyczyć klucz,
+	 * to od tego sąsiada pożyczany jest pojedynczy klucz.</li>
+	 * <li>Jeśli żaden z sąsiednich węzłów nie może pożyczyć żadnego klucza,
+	 * to węzeł zostaje połączony razem ze swoim sąsiadem w jeden węzeł</li>
+	 * </ol>
+	 * 
+	 * Łączenie dwóch węzłów może spowodować zmianę ilości kluczy rodzica.
+	 * Wtedy funkcja zwraca wartość true, w przeciwnym razie zwraca wartość false.
+	 * @param parent Rodzic węzła. null, jeśli węzeł jest rootem.
+	 * @param childIndex Indeks w liście pageIDs rodzica, pod którym znajduje sie wskazanie na ten węzeł.
+	 * @param pageID Numer strony, na której zapisywane są zmienione dane.
+	 * @param pageManager Menadżer stron drzewa.
+	 * @param currentLevel Poziom węzła.
+	 * @return true, jeśli zmieniła się liczba kluczy rodzica.
+	 */
 	public boolean handleMerger(InnerNode<K, V> parent, int childIndex, int pageID, PageManager<K, V> pageManager,
 			int currentLevel) {
 		if (parent == null) {
@@ -122,14 +189,16 @@ public abstract class Node<K extends Comparable<K>, V> implements java.io.Serial
 		return false;
 	}
 
-
-	/**dodaje dan� warto�� do tego w�z�a, warto�� nie jest zwi�zana z drzewem
-	 * @param key klucz szukanego w�z�a
-	 * @param value dodawana warto��
-	 * @param pageID identyfikator nowej strony
-	 * @param pageManager Menadzer stron
-	 * @param currentLevel poziom aktualnego w�z�a
-	 * @return true je�li dodano warto�� do jakiego� w�z�a
+	/**
+	 * Dodaje dodatkową wartość do węzła posiadającego podany klucz.
+	 * Jeśli węzeł nie posiada tego klucza, klucz szukany jest rekurencyjnie
+	 * w niższych węzłach drzewa.
+	 * @param key Klucz znajdujący się w węźle, do którego dodawana jest wartość.
+	 * @param value Dodawana dodatkowa wartość
+	 * @param pageID Numer strony, na której zapisywane są zmienione dane.
+	 * @param pageManager Menadżer stron drzewa.
+	 * @param currentLevel Poziom węzła.
+	 * @return true, jeśli znaleziono węzeł o danym kluczu i dodano do niego wartość.
 	 */
 	public boolean insertNodeValue(K key, V value, int pageID, PageManager<K, V> pageManager, int currentLevel) {
 		int i = getKeyLocation(key);
@@ -151,14 +220,16 @@ public abstract class Node<K extends Comparable<K>, V> implements java.io.Serial
 		}
 	}
 	
-
-	/**usuwa dan� warto�� z tego w�z�a, warto�� nie jest zwi�zana z drzewem
-	 * @param key klucz szukanego w�z�a
-	 * @param value dodawana warto��
-	 * @param pageID identyfikator nowej strony
-	 * @param pageManager Menadzer stron
-	 * @param currentLevel poziom aktualnego w�z�a
-	 * @return true je�li usuni�to warto�� z jakiego� w�z�a
+	/**
+	 * Usuwa podaną dodatkową wartość z węzła posiadającego podany klucz.
+	 * Jeśli węzeł nie posiada tego klucza, klucz szukany jest rekurencyjnie
+	 * w niższych węzłach drzewa.
+	 * @param key Klucz znajdujący się w węźle, z którego usuwana jest wartość.
+	 * @param value Usuwana dodatkowa wartość
+	 * @param pageID Numer strony, na której zapisywane są zmienione dane.
+	 * @param pageManager Menadżer stron drzewa.
+	 * @param currentLevel Poziom węzła.
+	 * @return true jeśli usunięto wartość z jakiegoś węzła
 	 */
 	public boolean deleteNodeValue(K key, V value, int pageID, PageManager<K, V> pageManager, int currentLevel) {
 		int i = getKeyLocation(key);
@@ -180,59 +251,73 @@ public abstract class Node<K extends Comparable<K>, V> implements java.io.Serial
 		}
 	}
 
-
 	/**
-	 * Wypisuje warto�ci trzymane w node
+	 * Funkcja wypisująca dodatkowe wartości przechowywane w węźle.
 	 */
 	public void writeNodeValues() {
 		for (int i = 0; i < nodeValueList.size(); i++)
 			System.out.print(nodeValueList.get(i).toString() + " ");
 	}
 
-	/** Dodaje now� warto�� do drzewa
-	 * @param key klucz warto�ci
-	 * @param value warto��
-	 * @param pageID nowa zautualizowana strona
-	 * @param pageManager 
-	 * @param currentLevel aktualny poziom w�z�a
-	 * @return split, je�eli jest wymagany by doda� now� wartos�
+	/**
+	 * Rekurencyjnie dodaje nową wartość do drzewa.
+	 * @param key Klucz wartości.
+	 * @param value Wartość
+	 * @param pageID Numer strony, na której zapisywane są zmienione dane.
+	 * @param pageManager Menadżer stron drzewa.
+	 * @param currentLevel Poziom węzła.
+	 * @return Dane o podziale węzła, jeśli taki nastąpił.
 	 */
 	public abstract Split<K, V> insert(K key, V value, int pageID, PageManager<K, V> pageManager, int currentLevel);
 
-	/**Zwraca nowo utworzonego splita
-	 * @return
+	/**
+	 * Dzieli węzeł na dwa. Zwraca informacje o nowo powstałym
+	 * węźle lewym, prawym, oraz o kluczy dzielącym te dwa węzły
+	 * (najmniejszy klucz prawego węzła).
+	 * @return Dane o podziale węzła.
 	 */
 	public abstract Split<K, V> split();
 
+	/**
+	 * Rekurencyjnie usuwa wskazany klucz z drzewa.
+	 * @param key Klucz do usunięcia.
+	 * @param parent Rodzic węzła. null, jeśli węzeł jest rootem.
+	 * @param childIndex Indeks w liście pageIDs rodzica, pod którym znajduje sie wskazanie na ten węzeł.
+	 * @param pageID Numer strony, na której zapisywane są zmienione dane.
+	 * @param pageManager Menadżer stron drzewa.
+	 * @param currentLevel Poziom węzła.
+	 * @return true, jeśli zmieniła się liczba kluczy rodzica.
+	 */
 	public abstract boolean remove(K key, InnerNode<K, V> parent, int childIndex, int pageID,
 			PageManager<K, V> pageManager, int currentLevel);	// przekazuje
 															 	// rodzica, aby
-																// miec dostep
+																// mieć dostęp
 																// do braci
 
-	/**��czy dwa w�z�y
-	 * @param mergingNode w�ze� z kt�rym si� ��czymy
-	 * @param mergeToLeft czy po�ycza od lewego
-	 * @param splitKey klucz dziel�cy w�z�y
+	/**
+	 * Łączy węzeł z podanym sąsiadem.
+	 * @param mergingNode Węzeł, który łączony jest z danym węzłem.
+	 * @param mergeToLeft Czy dołączany węzeł jest lewym sąsiadem.
+	 * @param splitKey Klucz dzielący węzły.
 	 */
 	abstract protected void mergeWith(Node<K, V> mergingNode, boolean mergeToLeft, K splitKey);
 
-	/**porzycza klucze od wskazanego s�siada
-	 * @param lender wskazany s�siad
-	 * @param borrowFromLeft czy po�ycza od lewego
-	 * @param splitKey klucz dziel�cy w�z�y
-	 * @return klucz 
+	/**
+	 * Pożycza klucz od wskazanego sąsiada.
+	 * @param lender Wskazany sąsiad.
+	 * @param borrowFromLeft Czy wskazany węzeł jest lewym sąsiadem.
+	 * @param splitKey Klucz dzielący węzły.
+	 * @return Klucz przepchany do rodzica w wyniku zmiany kluczy w węzłach.
 	 */
 	abstract protected K borrowKeys(Node<K, V> lender, boolean borrowFromLeft, K splitKey);
 
-	/**Wypisuje warto�ci z drzewa
-	 * @param prefix prefix znajduj�cy si� przed wypisywanymi warto�ciami
-	 * @param myLevel poziom w�z�a
-	 * @param pageManager 
-	 * @param myPageID numer identyfikacyjny strony
+	/**
+	 * Wypisuje wartości z drzewa.
+	 * @param prefix Prefiks znajdujący się przed wypisywanymi wartościami.
+	 * @param pageID Numer strony, na której zapisywane są zmienione dane.
+	 * @param pageManager Menadżer stron drzewa.
+	 * @param currentLevel Poziom węzła.
 	 */
-	abstract public void dump(String prefix, int myLevel, PageManager<K, V> pageManager, int myPageID);
-
-	// abstract public void checkForErrors(boolean root); //DEBUG
+	abstract public void dump(String prefix, int pageID, PageManager<K, V> pageManager, int currentLevel);
 
 }

@@ -160,7 +160,7 @@ public class BPlusTree<K extends Comparable<K>, V> {
 	public void dump(){
 		pageManager.resetUsedPagesCount();
 		System.out.println("miTree of height " + height );
-		pageManager.getNodeFromPage(root, height).dump("", height, pageManager, root);
+		pageManager.getNodeFromPage(root, height).dump("", root, pageManager, height);
 		System.out.println("Used pages: " + pageManager.getUsedPageCount());
 		System.out.println("Unused pages: " + pageManager.getUnUsedPageCount());
 		pageManager.resetUsedPagesCount();
