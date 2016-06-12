@@ -89,6 +89,11 @@ public class InnerNode<K extends Comparable<K>, V> extends Node<K, V> implements
 
 	public void dump(String prefix, int myLevel, PageManager<K, V> pageManager, int myPageID) {
 		System.out.println(prefix + "Inner Node on page " + myPageID + " - order: " + ORDER);
+		if(!nodeValueList.isEmpty()){
+			System.out.print(prefix + "Extra values: ");
+			writeNodeValues();
+			System.out.println("");
+		}
 		for(int i=0; i<pageIDs.size(); i++){
 			pageManager.setPageUsed(pageIDs.get(i));
 			getChild(i, myLevel, pageManager).dump(prefix + "    ", myLevel - 1, pageManager, pageIDs.get(i));
@@ -192,10 +197,12 @@ public class InnerNode<K extends Comparable<K>, V> extends Node<K, V> implements
 			keys.add(0, splitKey);
 			keys.addAll(0, mergingNode.keys);
 			pageIDs.addAll(0, ((InnerNode<K,V>)mergingNode).pageIDs);
+			nodeValueList.addAll(0, mergingNode.nodeValueList);
 		} else {
 			keys.add(splitKey);
 			keys.addAll(mergingNode.keys);
 			pageIDs.addAll(((InnerNode<K,V>)mergingNode).pageIDs);
+			nodeValueList.addAll(mergingNode.nodeValueList);
 		}	
 	}
 

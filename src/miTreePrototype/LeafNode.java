@@ -89,6 +89,11 @@ public class LeafNode<K extends Comparable<K>, V> extends Node<K, V> implements 
 	public void dump(String prefix, int myLevel, PageManager<K, V> pageManager, int myPageID) {
 		System.out.println(prefix + "Leaf Node on page " + myPageID + " - order: "+ ORDER);
 		pageManager.setPageUsed(myPageID);
+		if(!nodeValueList.isEmpty()){
+			System.out.print(prefix + "Extra values: ");
+			writeNodeValues();
+			System.out.println("");
+		}
 		for(int i=0; i<keys.size(); i++){
 			pageManager.setPageUsed(pageIDs.get(i));
 			System.out.println(prefix + getValue(i, pageManager).toString()+ " - value on page " + pageIDs.get(i));
@@ -115,9 +120,11 @@ public class LeafNode<K extends Comparable<K>, V> extends Node<K, V> implements 
 		if (mergeToLeft){
 			keys.addAll(0, mergingNode.keys);
 			pageIDs.addAll(0, ((LeafNode<K,V>)mergingNode).pageIDs);
+			nodeValueList.addAll(0, mergingNode.nodeValueList);
 		} else {
 			keys.addAll(mergingNode.keys);
 			pageIDs.addAll(((LeafNode<K,V>)mergingNode).pageIDs);
+			nodeValueList.addAll(mergingNode.nodeValueList);
 		}
 	}
 
