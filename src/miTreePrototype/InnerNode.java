@@ -12,7 +12,7 @@ import java.util.ArrayList;
 public class InnerNode<K extends Comparable<K>, V> extends Node<K, V> implements Serializable {
 
 	
-	/**
+	/**Tworzy nowy wewnêtrzny wêze³
 	 * @param order
 	 */
 	public InnerNode(int order) {
@@ -26,14 +26,27 @@ public class InnerNode<K extends Comparable<K>, V> extends Node<K, V> implements
 		return keys.size() > Math.ceil((double)(ORDER+1)/2-1);
 	}
 	
+	/**Zwraca dziecko o podanym indeksie
+	 * @param index 
+	 * @param myLevel poziom akrualny wêz³a
+	 * @param pageManager 
+	 * @return dziecko o podanym indeksie
+	 */
 	public Node<K, V> getChild(int index, int myLevel, PageManager<K, V> pageManager){
 		return pageManager.getNodeFromPage(pageIDs.get(index), myLevel - 1);
 	}
 	
+	/**Ustawia wskazanie na dziecko na danej stronie
+	 * @param index miesce na liœcie potomków
+	 * @param pageNumber numer strony dziecka
+	 */
 	public void setChild(int index, int pageNumber){ //pageNumber
 		pageIDs.set(index, pageNumber);
 	}
 
+	/* (non-Javadoc)
+	 * @see miTreePrototype.Node#insert(java.lang.Comparable, java.lang.Object, int, miTreePrototype.PageManager, int)
+	 */
 	public Split<K, V> insert(K key, V value, int pageID, PageManager<K, V> pageManager, int currentLevel){
 		
 		int i = getKeyLocation(key);

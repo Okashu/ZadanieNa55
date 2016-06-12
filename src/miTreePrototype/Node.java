@@ -189,8 +189,19 @@ public abstract class Node<K extends Comparable<K>, V> implements java.io.Serial
 			System.out.print(nodeValueList.get(i).toString() + " ");
 	}
 
+	/** Dodaje now¹ wartoœæ do drzewa
+	 * @param key klucz wartoœci
+	 * @param value wartoœæ
+	 * @param pageID nowa zautualizowana strona
+	 * @param pageManager 
+	 * @param currentLevel aktualny poziom wêz³a
+	 * @return split, je¿eli jest wymagany by dodaæ now¹ wartosæ
+	 */
 	public abstract Split<K, V> insert(K key, V value, int pageID, PageManager<K, V> pageManager, int currentLevel);
 
+	/**Zwraca nowo utworzonego splita
+	 * @return
+	 */
 	public abstract Split<K, V> split();
 
 	public abstract boolean remove(K key, InnerNode<K, V> parent, int childIndex, int pageID,
