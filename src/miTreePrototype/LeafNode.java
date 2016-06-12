@@ -108,6 +108,7 @@ public class LeafNode<K extends Comparable<K>, V> extends Node<K, V> implements 
 		
 		return new Split<K,V>(rightSibling.keys.get(0), this, rightSibling);
 	}
+
 	/**
 	 * Dzia³a podobnie jak split(), ale jest wywo³ywane, kiedy wysokoœæ drzewa jest równa 1. Liœæ dzieli siê na dwa, ale o mniejszym rozmiarze.
 	 * Wynika to ze struktury miTree.
@@ -126,16 +127,9 @@ public class LeafNode<K extends Comparable<K>, V> extends Node<K, V> implements 
 		return new Split<K,V>(rightSibling.keys.get(0), leftSibling, rightSibling);
 	}
 
-	/**
-	 * Wypisuje zawartoœæ tego Node'a
-	 * 
-	 * @param prefix Tekst dodawany przed ka¿d¹ lini¹ tekstu.
-	 * @param myLevel Poziom tego Node'a (tutaj powinien byæ zawsze 1, bo jest liœciem).
-	 * @param myPageID Numer strony, na której znajduje siê ten Node.
-	 */
-	public void dump(String prefix, int myLevel, PageManager<K, V> pageManager, int myPageID) {
-		System.out.println(prefix + "Leaf Node on page " + myPageID + " - order: "+ ORDER);
-		pageManager.setPageUsed(myPageID);
+	public void dump(String prefix, int pageID, PageManager<K, V> pageManager, int currentLevel) {
+		System.out.println(prefix + "Leaf Node on page " + pageID + " - order: "+ ORDER);
+		pageManager.setPageUsed(pageID);
 		if(!nodeValueList.isEmpty()){
 			System.out.print(prefix + "Extra values: ");
 			writeNodeValues();

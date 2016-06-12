@@ -3,12 +3,12 @@ package miTreePrototype;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-
 /**
  * Klasa wewnêtrznych wêz³ów drzewa, nie przechowuj¹ wartoœci lecz wskazania na kolejne wêz³y drzewa
- * @param <K> typ kluczy
- * @param <V> typ wartoœci
+ * @param <K> Typ kluczy (musi implementowaæ Comarable<K>).
+ * @param <V> Typ wartoœci.
  */
+
 public class InnerNode<K extends Comparable<K>, V> extends Node<K, V> implements Serializable {
 
 	
@@ -108,8 +108,8 @@ public class InnerNode<K extends Comparable<K>, V> extends Node<K, V> implements
 		return new Split<K,V>(middleKey, leftSibling, rightSibling);
 	}
 
-	public void dump(String prefix, int myLevel, PageManager<K, V> pageManager, int myPageID) {
-		System.out.println(prefix + "Inner Node on page " + myPageID + " - order: " + ORDER);
+	public void dump(String prefix, int pageID, PageManager<K, V> pageManager, int currentLevel) {
+		System.out.println(prefix + "Inner Node on page " + pageID + " - order: " + ORDER);
 		if(!nodeValueList.isEmpty()){
 			System.out.print(prefix + "Extra values: ");
 			writeNodeValues();
@@ -117,7 +117,7 @@ public class InnerNode<K extends Comparable<K>, V> extends Node<K, V> implements
 		}
 		for(int i=0; i<pageIDs.size(); i++){
 			pageManager.setPageUsed(pageIDs.get(i));
-			getChild(i, myLevel, pageManager).dump(prefix + "    ", myLevel - 1, pageManager, pageIDs.get(i));
+			getChild(i, currentLevel, pageManager).dump(prefix + "    ", currentLevel - 1, pageManager, pageIDs.get(i));
 			if(i<keys.size()){
 				System.out.println(prefix + "+Key: " + keys.get(i));
 			}
