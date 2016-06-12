@@ -9,6 +9,10 @@ public class BPlusTree<K extends Comparable<K>, V> {
 	private int height;
 	public PageManager<K, V> pageManager;
 
+	/**Tworzy nowe drzewo o zadanych parametrach
+	 * @param order
+	 * @param pageSize
+	 */
 	public BPlusTree(int order, int pageSize) {
 		if (order < 3){
 			throw new IllegalArgumentException();
@@ -20,13 +24,21 @@ public class BPlusTree<K extends Comparable<K>, V> {
 		height = 1;
 		pageManager.writeNodeToPage(rootNode, root, height);
 	}
-
+	
+	/**ustawia wysokoœæ drzewa
+	 * @param height nowa wysokoœæ
+	 */
 	public void setHeight(int height){
 		this.height = height;
 		pageManager.setTreeHeight(height);
 	}
+	/**zwraca wyskoœæ drzewa
+	 */
 	public int getHeight(){ return height; }
 	
+	/**Szuka liœcia przechowuj¹cego dany klucz
+	 * @return szukany liœæ
+	 */
 	private LeafNode<K,V> searchForNode(K key){
 		Node<K,V> node = pageManager.getNodeFromPage(root, height);
 		int currentLevel = height;
@@ -52,10 +64,14 @@ public class BPlusTree<K extends Comparable<K>, V> {
 		}
 	}
 	
+	/**Dodaje now¹ wartoœæ do drzewa
+	 * @param key klucz wartoœci	
+	 * @param value nowa wartoœæ
+	 */
 	public void insert(K key, V value){
 		int newPageID = pageManager.allocateNewPage();
 		Split<K,V> split = pageManager.getNodeFromPage(root,height).insert(key, value, newPageID, pageManager, height);
-		root = newPageID;
+		root = newPageID;	
 		if (split != null){
 			setHeight(height + 1);
 			int splitPageID = pageManager.allocateNewPage();
@@ -68,16 +84,32 @@ public class BPlusTree<K extends Comparable<K>, V> {
 			pageManager.writeNodeToPage(rootNode, newPageID, height);
 		}
 	}
+	/**Dodaje now¹ wartoœæ do Node, wartoœæ ta 
+	 * nie ma zwi¹zku z wartoœciami przechowywanymi na drzewie
+	 * @param nodeKey
+	 * @param value
+	 */
 	public void insertNodeValue(K nodeKey,V value){
 		int newPageID = pageManager.allocateNewPage();
-		root = newPageID;
-		pageManager.getNodeFromPage(root,height).insertNodeValue(nodeKey, value, newPageID, pageManager, height);
+		if(pageManager.getNodeFromPage(root, height).insertNodeValue(nodeKey, value, newPageID, pageManager, height)){
+			root = newPageID;
+		}
 	}
+	/**Usuwa wartosc z Node, wartoœæ ta nie ma zwi¹zku
+	 *  z wartœciami przechowywanymi na drzewie
+	 * @param nodeKey
+	 * @param value
+	 */
 	public void deleteNodeValue(K nodeKey,V value){
 		int newPageID = pageManager.allocateNewPage();
-		root = newPageID;
-		pageManager.getNodeFromPage(root,height).deleteNodeValue(nodeKey, value, newPageID, pageManager, height);
+		if(pageManager.getNodeFromPage(root, height).deleteNodeValue(nodeKey, value, newPageID, pageManager, height)){
+			root = newPageID;
+		}
 	}
+	/**Zwraca wartoœæ zwi¹zan¹ z danym kluczem
+	 * @param key klucz szukanej wartoœci
+	 * @return szukana wartoœæ
+	 */
 	public V retrieve(K key){
 		LeafNode<K,V> leaf = searchForNode(key);
 		if(leaf != null){
@@ -92,6 +124,10 @@ public class BPlusTree<K extends Comparable<K>, V> {
 		}
 	}
 	
+	/**Usuwa wartoœæ zwi¹zan¹ z danym kluczem
+	 * @param key klucz usuwanej wartoœci
+	 * @return true jeœli usuniêto wartoœæ, false jeœli jej nie by³o
+	 */
 	public boolean remove(K key){
 		if(find(key) == null){
 			return false;
@@ -115,6 +151,9 @@ public class BPlusTree<K extends Comparable<K>, V> {
 		return true;
 	}
 	
+	/**
+	 * Wypisuje zawartoœæ drzewa
+	 */
 	public void dump(){
 		System.out.println("miTree of height " + height );
 		pageManager.getNodeFromPage(root, height).dump("", height, pageManager, root);

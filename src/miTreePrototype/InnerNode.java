@@ -4,16 +4,24 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 
+/**
+ * Klasa wewnêtrznych wêz³ów drzewa, nie przechowuj¹ wartoœci lecz wskazania na kolejne wêz³y drzewa
+ * @param <K> typ kluczy
+ * @param <V> typ wartoœci
+ */
 public class InnerNode<K extends Comparable<K>, V> extends Node<K, V> implements Serializable {
 
 	
+	/**
+	 * @param order
+	 */
 	public InnerNode(int order) {
 		super(order);
 		pageIDs = new ArrayList<Integer>(ORDER+1);
 	}
 	
-	//powoduje zmniejszenie minimalnego rozmiaru inner-node'Ã³w, zapobiega to
-	//przepeÅ‚nianiu drzewa przy poÅ¼yczaniu kluczy od braci
+	//powoduje zmniejszenie minimalnego rozmiaru inner-node'ów, zapobiega to
+	//przepe³nianiu drzewa przy poÅ¼yczaniu kluczy od braci
 	public boolean canLendAKey(){
 		return keys.size() > Math.ceil((double)(ORDER+1)/2-1);
 	}
@@ -89,6 +97,11 @@ public class InnerNode<K extends Comparable<K>, V> extends Node<K, V> implements
 
 	public void dump(String prefix, int myLevel, PageManager<K, V> pageManager, int myPageID) {
 		System.out.println(prefix + "Inner Node on page " + myPageID + " - order: " + ORDER);
+		if(!nodeValueList.isEmpty()){
+			System.out.print(prefix + "Extra values: ");
+			writeNodeValues();
+			System.out.println("");
+		}
 		for(int i=0; i<pageIDs.size(); i++){
 			getChild(i, myLevel, pageManager).dump(prefix + "    ", myLevel - 1, pageManager, pageIDs.get(i));
 			if(i<keys.size()){
@@ -191,10 +204,12 @@ public class InnerNode<K extends Comparable<K>, V> extends Node<K, V> implements
 			keys.add(0, splitKey);
 			keys.addAll(0, mergingNode.keys);
 			pageIDs.addAll(0, ((InnerNode<K,V>)mergingNode).pageIDs);
+			nodeValueList.addAll(0, mergingNode.nodeValueList);
 		} else {
 			keys.add(splitKey);
 			keys.addAll(mergingNode.keys);
 			pageIDs.addAll(((InnerNode<K,V>)mergingNode).pageIDs);
+			nodeValueList.addAll(mergingNode.nodeValueList);
 		}	
 	}
 

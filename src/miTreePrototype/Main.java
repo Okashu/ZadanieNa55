@@ -179,6 +179,15 @@ public class Main {
 		
 		tree1000.dump();
 		
+		//tree1000.remove(1200);
+		
+		tree1000.insertNodeValue(1100, 34);
+		tree1000.insertNodeValue(1098, 14);
+		tree1000.insertNodeValue(1098, 16);
+		tree1000.insertNodeValue(1018, 36);
+		tree1000.deleteNodeValue(1098, 16);
+		tree1000.dump();
+		
 		/*for(int i = 1005; i < 1475; i++){
 				System.out.println(i);
 				tree1000.remove(i);
