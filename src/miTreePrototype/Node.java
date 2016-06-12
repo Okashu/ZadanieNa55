@@ -278,6 +278,15 @@ public abstract class Node<K extends Comparable<K>, V> implements java.io.Serial
 	 * @return Dane o podziale węzła.
 	 */
 	public abstract Split<K, V> split();
+	
+	/**
+	 * Działa podobnie jak split(), ale jest wywoływane, kiedy
+	 * wysokość drzewa jest równa 1.
+	 * Liść dzieli się na dwa, ale o mniejszym rozmiarze.
+	 * Wynika to ze struktury miTree.
+	 * @return Dane o podziale węzła.
+	 */
+	public abstract Split<K, V> splitAsRoot();
 
 	/**
 	 * Rekurencyjnie usuwa wskazany klucz z drzewa.

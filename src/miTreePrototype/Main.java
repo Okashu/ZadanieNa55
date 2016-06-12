@@ -179,8 +179,6 @@ public class Main {
 		
 		tree1000.dump();
 		
-		//tree1000.remove(1200);
-		
 		tree1000.insertNodeValue(1100, 34);
 		tree1000.insertNodeValue(1098, 14);
 		tree1000.insertNodeValue(1098, 16);
@@ -188,23 +186,6 @@ public class Main {
 		tree1000.deleteNodeValue(1098, 16);
 		tree1000.dump();
 		
-		/*for(int i = 1005; i < 1475; i++){
-				System.out.println(i);
-				tree1000.remove(i);
-
-		}
-		
-		tree1000.dump();*/
-		/*BPlusTree<Integer, Integer> tree3 = new BPlusTree<Integer, Integer>(4, PAGESIZE);
-		tree3.insert(3,3);
-		tree3.insert(2, 2);
-		tree3.dump();
-		tree3.remove(2);
-		tree3.dump();
-		tree3.remove(3);
-		tree3.dump();
-		tree3.insert(2, 2);
-		tree3.dump();*/
 	}
 
 }

@@ -95,13 +95,6 @@ public class LeafNode<K extends Comparable<K>, V> extends Node<K, V> implements 
 		return new Split<K,V>(rightSibling.keys.get(0), this, rightSibling);
 	}
 
-	/**
-	 * Dzia³a podobnie jak split(), ale jest wywo³ywane, kiedy
-	 * wysokoœæ drzewa jest równa 1.
-	 * Liœæ dzieli siê na dwa, ale o mniejszym rozmiarze.
-	 * Wynika to ze struktury miTree.
-	 * @return Dane o podziale wêz³a.
-	 */
 	public Split<K, V> splitAsRoot(){
 		int mid = (int)Math.ceil((double)keys.size()/2);
 		LeafNode<K, V> leftSibling = new LeafNode<K, V>(Math.max(3, ORDER/2));

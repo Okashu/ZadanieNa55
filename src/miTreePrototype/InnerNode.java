@@ -22,7 +22,7 @@ public class InnerNode<K extends Comparable<K>, V> extends Node<K, V> implements
 		pageIDs = new ArrayList<Integer>(ORDER+1);
 	}
 	
-	// innerNode maj¹ mniejszy minimaln¹ liczbê kluczy, zapobiega to
+	// innerNode maj¹ mniejsz¹ minimaln¹ liczbê kluczy, zapobiega to
 	// przepe³nianiu drzewa przy po¿yczaniu kluczy od wêz³ów s¹siednich
 	public boolean canLendAKey(){
 		return keys.size() > Math.ceil((double)(ORDER+1)/2-1);
