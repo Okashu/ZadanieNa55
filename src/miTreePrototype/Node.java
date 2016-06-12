@@ -9,10 +9,6 @@ public abstract class Node<K extends Comparable<K>, V> implements java.io.Serial
 	public List<Integer> pageIDs;
 	public List<V> nodeValueList;
 	
-	public Node(){
-		ORDER = 3;
-	}
-	
 	public void setOrder(int order){
 		this.ORDER = order;
 	}
