@@ -2,7 +2,6 @@ package miTreePrototype;
 
 /**
  * Klasa centralna drzewa, obs³uguje wszystkie zapytania programu.
- * @author Adam
  *
  * @param <K> Typ s³u¿¹cy za klucze w drzewie. Musi implementowaæ Comparable.
  * @param <V> Typ s³u¿¹cy za wartoœci w drzewie.
@@ -15,7 +14,8 @@ public class BPlusTree<K extends Comparable<K>, V> {
 	private int height;
 	public PageManager<K, V> pageManager;
 
-	/**Tworzy nowe drzewo o zadanych parametrach
+	/**
+	 * Tworzy nowe drzewo o zadanych parametrach.
 	 * @param order Maksymalna liczba kluczy w drzewie.
 	 * @param pageSize Rozmiar strony w drzewie.
 	 */
@@ -31,22 +31,24 @@ public class BPlusTree<K extends Comparable<K>, V> {
 		pageManager.writeNodeToPage(rootNode, root, height);
 	}
 	
-	/**ustawia wysokoœæ drzewa
-	 * @param height nowa wysokoœæ
+	/**
+	 * Ustawia wysokoœæ drzewa.
+	 * @param height Nowa wysokoœæ.
 	 */
 	public void setHeight(int height){
 		this.height = height;
 		pageManager.setTreeHeight(height);
 	}
 	/**
-	 * zwraca wyskoœæ drzewa
-	 * 
-	 * @return wysokoœæ drzewa
+	 * Zwraca wyskoœæ drzewa.
+	 * @return Wysokoœæ drzewa.
 	 */
 	public int getHeight(){ return height; }
 	
-	/**Szuka liœcia przechowuj¹cego dany klucz
-	 * @return szukany liœæ
+	/**
+	 * Szuka liœcia, które mo¿e zawieraæ dany klucz.
+	 * @param key Szukany klucz.
+	 * @return Liœæ, który mo¿e zawieraæ dany klucz.
 	 */
 	private LeafNode<K,V> searchForNode(K key){
 		Node<K,V> node = pageManager.getNodeFromPage(root, height);
@@ -59,9 +61,11 @@ public class BPlusTree<K extends Comparable<K>, V> {
 		return (LeafNode<K, V>)node;
 	}
 	
-	/**Wyszukuje wêze³ z danym kluczem
-	 * @param key klucz
-	 * @return liœæ, wtedy i tylko wtedy gdy znajduje siê w nim klucz
+	/**
+	 * Wyszukuje wêz³a z danym kluczem. Jeœli takiego nie ma,
+	 * zwraca null.
+	 * @param key Szukany klucz.
+	 * @return Liœæ zawieraj¹cy dany klucz. Jeœli takiego nie ma, to null.
 	 */
 	private Node<K,V> find(K key){
 		LeafNode<K,V> leaf = searchForNode(key);
@@ -77,9 +81,10 @@ public class BPlusTree<K extends Comparable<K>, V> {
 		}
 	}
 	
-	/**Dodaje now¹ wartoœæ do drzewa
-	 * @param key klucz wartoœci	
-	 * @param value nowa wartoœæ
+	/**
+	 * Dodaje now¹ wartoœæ do drzewa.
+	 * @param key Klucz wartoœci.	
+	 * @param value Wartoœæ.
 	 */
 	public void insert(K key, V value){
 		int newPageID = pageManager.allocateNewPage();
@@ -97,10 +102,12 @@ public class BPlusTree<K extends Comparable<K>, V> {
 			pageManager.writeNodeToPage(rootNode, newPageID, height);
 		}
 	}
-	/**Dodaje now¹ wartoœæ do Node, wartoœæ ta 
-	 * nie ma zwi¹zku z wartoœciami przechowywanymi na drzewie
-	 * @param nodeKey
-	 * @param value
+	
+	/**
+	 * Dodaje wartoœæ dodatkow¹ do jednego z wêz³ów na drzewie,
+	 * prechowuj¹cego podany klucz.
+	 * @param nodeKey Klucz znajduj¹cy siê w szukanym wêŸle.
+	 * @param value Dodatkowa wartoœæ.
 	 */
 	public void insertNodeValue(K nodeKey,V value){
 		int newPageID = pageManager.allocateNewPage();
@@ -109,10 +116,11 @@ public class BPlusTree<K extends Comparable<K>, V> {
 		}
 	}
 
-	/**Usuwa wartosc z Node, wartoœæ ta nie ma zwi¹zku
-	 *  z wartœciami przechowywanymi na drzewie
-	 * @param nodeKey
-	 * @param value
+	/**
+	 * Usuwa wartoœæ dodatkow¹ z jednego z wêz³ów na drzewie,
+	 * prechowuj¹cego podany klucz.
+	 * @param nodeKey Klucz znajduj¹cy siê w szukanym wêŸle.
+	 * @param value Dodatkowa wartoœæ.
 	 */
 	public void deleteNodeValue(K nodeKey,V value){
 		int newPageID = pageManager.allocateNewPage();
@@ -121,9 +129,10 @@ public class BPlusTree<K extends Comparable<K>, V> {
 		}
 	}
 	
-	/**Zwraca wartoœæ zwi¹zan¹ z danym kluczem
-	 * @param key klucz szukanej wartoœci
-	 * @return szukana wartoœæ
+	/**
+	 * Zwraca wartoœæ zwi¹zan¹ z danym kluczem.
+	 * @param key Klucz szukanej wartoœci.
+	 * @return Wartoœæ danego klucza.
 	 */
 	public V retrieve(K key){
 		LeafNode<K,V> leaf = searchForNode(key);
@@ -139,9 +148,10 @@ public class BPlusTree<K extends Comparable<K>, V> {
 		}
 	}
 	
-	/**Usuwa wartoœæ zwi¹zan¹ z danym kluczem
-	 * @param key klucz usuwanej wartoœci
-	 * @return true jeœli usuniêto wartoœæ, false jeœli jej nie by³o
+	/**
+	 * Usuwa wartoœæ zwi¹zan¹ z danym kluczem.
+	 * @param key Klucz usuwanej wartoœci.
+	 * @return true jeœli usuniêto wartoœæ, false jeœli jej nie by³o.
 	 */
 	public boolean remove(K key){
 		if(find(key) == null){
@@ -154,7 +164,6 @@ public class BPlusTree<K extends Comparable<K>, V> {
 		if (rootEmptyKeys){
 			//root ma 0 kluczy i jednego potomka
 			//root przechodzi na swojego potomka, wysokosc drzewa zmniejszona o 1
-			//root = ((InnerNode<K,V>)root).getChild(0); //tu bedzie pageNumber
 			
 			rootNode = ((InnerNode<K,V>)rootNode).getChild(0, height, pageManager);
 			setHeight(height - 1);
@@ -162,13 +171,9 @@ public class BPlusTree<K extends Comparable<K>, V> {
 			
 			pageManager.writeNodeToPage(rootNode, newPageID, height);
 		}
-		//checkForErrors(); //DEBUG
 		return true;
 	}
 	
-	/**
-	 * Wypisuje zawartoœæ drzewa
-	 */
 	public void dump(){
 		pageManager.resetUsedPagesCount();
 		System.out.println("miTree of height " + height );
@@ -177,9 +182,5 @@ public class BPlusTree<K extends Comparable<K>, V> {
 		System.out.println("Unused pages: " + pageManager.getUnUsedPageCount());
 		pageManager.resetUsedPagesCount();
 	}
-	
-	/*private void checkForErrors(){
-		root.checkForErrors(true);
-	}*/ //DEBUG
 
 }

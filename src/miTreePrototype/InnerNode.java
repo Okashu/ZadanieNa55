@@ -5,42 +5,47 @@ import java.util.ArrayList;
 
 /**
  * Klasa wewnêtrznych wêz³ów drzewa, nie przechowuj¹ wartoœci lecz wskazania na kolejne wêz³y drzewa
- * @param <K> Typ kluczy (musi implementowaæ Comarable<K>).
- * @param <V> Typ wartoœci.
+ * 
+ * @param <K> Typ s³u¿¹cy za klucze w drzewie. Musi implementowaæ Comparable.
+ * @param <V> Typ s³u¿¹cy za wartoœci w drzewie.
  */
 
 public class InnerNode<K extends Comparable<K>, V> extends Node<K, V> implements Serializable {
 
 	
-	/**Tworzy nowy wewnêtrzny wêze³
-	 * @param order
+	/**
+	 * Tworzy pusty InnerNode o zadanej maksymalnej liczbie kluczy.
+	 * @param order Maksymalna liczba kluczy w wêŸle.
 	 */
 	public InnerNode(int order) {
 		super(order);
 		pageIDs = new ArrayList<Integer>(ORDER+1);
 	}
 	
-	//powoduje zmniejszenie minimalnego rozmiaru inner-node'ów, zapobiega to
-	//przepe³nianiu drzewa przy poÅ¼yczaniu kluczy od braci
+	// innerNode maj¹ mniejszy minimaln¹ liczbê kluczy, zapobiega to
+	// przepe³nianiu drzewa przy po¿yczaniu kluczy od wêz³ów s¹siednich
 	public boolean canLendAKey(){
 		return keys.size() > Math.ceil((double)(ORDER+1)/2-1);
 	}
 	
-	/**Zwraca dziecko o podanym indeksie
-	 * @param index 
-	 * @param myLevel poziom akrualny wêz³a
-	 * @param pageManager 
-	 * @return dziecko o podanym indeksie
+	/**
+	 * Zwraca wêze³-dziecko o podanym indeksie.
+	 * @param index Indeks dziecka.
+	 * @param currentLevel Poziom wêz³a.
+	 * @param pageManager Menad¿er stron drzewa.
+	 * @return Wêze³-dziecko o podanym indeksie.
 	 */
-	public Node<K, V> getChild(int index, int myLevel, PageManager<K, V> pageManager){
-		return pageManager.getNodeFromPage(pageIDs.get(index), myLevel - 1);
+	public Node<K, V> getChild(int index, int currentLevel, PageManager<K, V> pageManager){
+		return pageManager.getNodeFromPage(pageIDs.get(index), currentLevel - 1);
 	}
 	
-	/**Ustawia wskazanie na dziecko na danej stronie
-	 * @param index miesce na liœcie potomków
-	 * @param pageNumber numer strony dziecka
+	/**
+	 * Ustawia wskazanie na dziecko na odpowiednim indeksie
+	 * na danej stronie.
+	 * @param index Indeks dziecka, którego numer strony jest zmieniony.
+	 * @param pageNumber Numer strony dziecka.
 	 */
-	public void setChild(int index, int pageNumber){ //pageNumber
+	public void setChild(int index, int pageNumber){
 		pageIDs.set(index, pageNumber);
 	}
 
@@ -124,7 +129,13 @@ public class InnerNode<K extends Comparable<K>, V> extends Node<K, V> implements
 		}
 	}
 	
-	// zwraca lewego brata podanego dziecka
+	/**
+	 * Zwraca lewego brata podanego dziecka. Jeœli nie istnieje, zwraca null.
+	 * @param childIndex Indeks dziecka, którego brata szukamy.
+	 * @param childLevel Poziom dziecka.
+	 * @param pageManager Menad¿er stron drzewa.
+	 * @return Lewy brat, jeœli istnieje.
+	 */
 	public Node<K,V> getChildsLeftSibling(int childIndex, int childLevel, PageManager<K, V> pageManager){
 		if(childIndex > 0){
 			return getChild(childIndex-1, childLevel+1, pageManager);
@@ -132,7 +143,13 @@ public class InnerNode<K extends Comparable<K>, V> extends Node<K, V> implements
 		return null;
 	}
 	
-	// zwraca prawego brata podanego dziecka
+	/**
+	 * Zwraca prawego brata podanego dziecka. Jeœli nie istnieje, zwraca null.
+	 * @param childIndex Indeks dziecka, którego brata szukamy.
+	 * @param childLevel Poziom dziecka.
+	 * @param pageManager Menad¿er stron drzewa.
+	 * @return Prawy brat, jeœli istnieje.
+	 */
 	public Node<K,V> getChildsRightSibling(int childIndex, int childLevel, PageManager<K, V> pageManager){
 		if(childIndex < pageIDs.size()-1){
 			return getChild(childIndex+1, childLevel+1, pageManager);
@@ -173,7 +190,12 @@ public class InnerNode<K extends Comparable<K>, V> extends Node<K, V> implements
 		return false;
 	}
 	
-	// zwraca klucz oddzielajacy dwoch braci
+	/**
+	 * Funkcja zwracaj¹ca klucz oddzielaj¹cy dwóch s¹siednich dzieci.
+	 * @param childIndex Indeks jednego z dzieci.
+	 * @param leftSibling Czy druge dziecko jest lewym bratem.
+	 * @return Klucz oddzielaj¹cy wskazane dzieci.
+	 */
 	public K getChildSplitKey(int childIndex, boolean leftSibling){
 		if(leftSibling && childIndex > 0){
 			return keys.get(childIndex-1);
@@ -183,7 +205,12 @@ public class InnerNode<K extends Comparable<K>, V> extends Node<K, V> implements
 		return null;
 	}
 	
-	// zmienia klucz oddzielajacy dwoch braci
+	/**
+	 * Funkcja zmieniaj¹ca klucz oddzielaj¹cy dwóch s¹siednich dzieci.
+	 * @param childIndex Indeks jednego z dzieci.
+	 * @param leftSibling Czy druge dziecko jest lewym bratem.
+	 * @param key Nowy klucz oddzielaj¹cy wskazane dzieci.
+	 */
 	public void setChildSplitKey(int childIndex, boolean leftSibling, K key){
 		if(leftSibling && childIndex > 0){
 			keys.set(childIndex-1, key);
@@ -192,16 +219,12 @@ public class InnerNode<K extends Comparable<K>, V> extends Node<K, V> implements
 		}
 	}
 	
-	/*public int getChildsId(Node<K,V> child, int childLevel, PageManager<K, V> pageManager){
-		for(int i=0; i < pageIDs.size(); i++){
-			if (getChild(i, childLevel+1, pageManager) == child){
-				return pageIDs.get(i);
-			}
-		}
-		return -1;
-	}*/
-	
-	// usuwa klucz oddzielajacy pierwotnie oddzielajacy dwoch polaczonych braci
+	/**
+	 * Funkcja usuwaj¹ca klucz oddzielaj¹cy dwóch s¹siednich dzieci wraz
+	 * z dzieckiem bêdacym bratem pierwszego dziecka.
+	 * @param childIndex Indeks jednego z dzieci.
+	 * @param leftSibling Czy druge dziecko jest lewym bratem.
+	 */
 	public void removeChildSplitKey(int childIndex, boolean leftSibling){
 		if(leftSibling && childIndex > 0){
 			keys.remove(childIndex-1);
@@ -251,28 +274,5 @@ public class InnerNode<K extends Comparable<K>, V> extends Node<K, V> implements
 		}
 		return pushedKey;
 	}
-
-	/*public void checkForErrors(boolean root) {
-		if(needsToBeSplit() && !root){
-			System.out.println("cos sie nie rozdzielilo");
-		}
-		if(children.size() != (keys.size()+1)){
-			System.out.println("cos sie rozjechalo");
-		}
-		for(int i=0; i<children.size(); i++){
-			children.get(i).checkForErrors(false);
-			if(i<ORDER && i<keys.size()){
-				if (keys.get(i) == null){
-					System.out.println("cos sie znullowalo");
-				}
-				if(children.get(i) instanceof LeafNode){
-					if (i >= 0 && ((LeafNode<K,V>)children.get(i)).keys.get(0).compareTo(((LeafNode<K,V>)children.get(i+1)).keys.get(0)) >= 0){
-						System.out.println("cos jest nie po kolei");
-					}
-				}
-
-			}
-		}
-	}*/ //DEBUG
 
 }
