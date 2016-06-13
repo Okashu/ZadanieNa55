@@ -109,6 +109,7 @@ public class InnerNode<K extends Comparable<K>, V> extends Node<K, V> implements
 		rightSibling.pageIDs = new ArrayList<Integer>(pageIDs.subList(mid + 1, pageIDs.size()));
 		leftSibling.keys = new ArrayList<K>(keys.subList(0, mid));
 		leftSibling.pageIDs =  new ArrayList<Integer>(pageIDs.subList(0, mid + 1));
+		leftSibling.nodeValueList = this.nodeValueList;
 		
 		return new Split<K,V>(middleKey, leftSibling, rightSibling);
 	}
