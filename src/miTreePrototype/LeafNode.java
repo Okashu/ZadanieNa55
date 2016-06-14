@@ -5,26 +5,26 @@ import java.util.ArrayList;
 
 
 /**
- * Klasa wêz³ów, które znajduj¹ siê na samym dole drzewa.
- * Strony odpowiadaj¹ce ich kluczom przechowuj¹ nie wêz³y, ale wartoœci.
- * 
- * @param <K> Typ s³u¿¹cy za klucze w drzewie. Musi implementowaæ Comparable.
- * @param <V> Typ s³u¿¹cy za wartoœci w drzewie.
+ * Klasa wÄ™zÅ‚Ã³w, ktÃ³re znajdujÄ… siÄ™ na samym dole drzewa.
+ * Strony odpowiadajÄ…ce ich kluczom przechowujÄ… nie wÄ™zÅ‚y, ale wartoÅ›ci.
+ *  @author Kacper Kozerski, Adam Michalski, RafaÅ‚ MuszyÅ„ski
+ * @param <K> Typ sÅ‚uÅ¼Ä…cy za klucze w drzewie. Musi implementowaÄ‡ Comparable.
+ * @param <V> Typ sÅ‚uÅ¼Ä…cy za wartoÅ›ci w drzewie.
  */
 public class LeafNode<K extends Comparable<K>, V> extends Node<K, V> implements Serializable {
 
 	/**
 	 * Tworzy pusty LeafNode o zadanej maksymalnej liczbie kluczy.
-	 * @param order Maksymalna liczba kluczy w wêŸle.
+	 * @param order Maksymalna liczba kluczy w wÄ™Åºle.
 	 */
 	public LeafNode(int order) {
 		super(order);
 	}
 	
 	/**
-	 * Zwraca wartoœæ przechowywan¹ na wskazanym indeksie w wêŸle.
-	 * @param index Indeks wartoœci w wêŸle.
-	 * @param pageManager Menad¿er stron drzewa.
+	 * Zwraca wartoÅ›Ä‡ przechowywanÄ… na wskazanym indeksie w wÄ™Åºle.
+	 * @param index Indeks wartoÅ›ci w wÄ™Åºle.
+	 * @param pageManager MenadÅ¼er stron drzewa.
 	 * @return
 	 */
 	public V getValue(int index, PageManager<K, V> pageManager){
@@ -38,9 +38,9 @@ public class LeafNode<K extends Comparable<K>, V> extends Node<K, V> implements 
 	}
 	
 	/**
-	 * Szuka, gdzie w wêŸle znajduje siê dany klucz.
-	 * @param key Klucz, który ma byæ znaleziony.
-	 * @return Miejsce, gdzie znajduje siê klucz. -1, jeœli nie ma takiego klucza.
+	 * Szuka, gdzie w wÄ™Åºle znajduje siÄ™ dany klucz.
+	 * @param key Klucz, ktÃ³ry ma byÄ‡ znaleziony.
+	 * @return Miejsce, gdzie znajduje siÄ™ klucz. -1, jeÅ›li nie ma takiego klucza.
 	 */
 	public int getExactKeyLocation(K key){
 		int i = getKeyLocation(key);

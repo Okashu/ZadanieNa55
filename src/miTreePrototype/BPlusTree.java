@@ -1,10 +1,10 @@
 package miTreePrototype;
 
 /**
- * Klasa centralna drzewa, obs³uguje wszystkie zapytania programu.
- *
- * @param <K> Typ s³u¿¹cy za klucze w drzewie. Musi implementowaæ Comparable.
- * @param <V> Typ s³u¿¹cy za wartoœci w drzewie.
+ * Klasa centralna drzewa, obsÅ‚uguje wszystkie zapytania programu.
+ * @author Kacper Kozerski, Adam Michalski, RafaÅ‚ MuszyÅ„ski
+ * @param <K> Typ sÅ‚uÅ¼Ä…cy za klucze w drzewie. Musi implementowaÄ‡ Comparable.
+ * @param <V> Typ sÅ‚uÅ¼Ä…cy za wartoÅ›ci w drzewie.
  */
 public class BPlusTree<K extends Comparable<K>, V> {
 	
@@ -32,23 +32,23 @@ public class BPlusTree<K extends Comparable<K>, V> {
 	}
 	
 	/**
-	 * Ustawia wysokoœæ drzewa.
-	 * @param height Nowa wysokoœæ.
+	 * Ustawia wysokoÅ›Ä‡ drzewa.
+	 * @param height Nowa wysokoÅ›Ä‡.
 	 */
 	public void setHeight(int height){
 		this.height = height;
 		pageManager.setTreeHeight(height);
 	}
 	/**
-	 * Zwraca wyskoœæ drzewa.
-	 * @return Wysokoœæ drzewa.
+	 * Zwraca wyskoÅ›Ä‡ drzewa.
+	 * @return WysokoÅ›Ä‡ drzewa.
 	 */
 	public int getHeight(){ return height; }
 	
 	/**
-	 * Szuka liœcia, które mo¿e zawieraæ dany klucz.
+	 * Szuka liÅ›cia, ktÃ³ry moÅ¼e zawieraÄ‡ dany klucz.
 	 * @param key Szukany klucz.
-	 * @return Liœæ, który mo¿e zawieraæ dany klucz.
+	 * @return LiÅ›Ä‡, ktÃ³ry moÅ¼e zawieraÄ‡ dany klucz.
 	 */
 	private LeafNode<K,V> searchForNode(K key){
 		Node<K,V> node = pageManager.getNodeFromPage(root, height);
@@ -62,10 +62,10 @@ public class BPlusTree<K extends Comparable<K>, V> {
 	}
 	
 	/**
-	 * Wyszukuje wêz³a z danym kluczem. Jeœli takiego nie ma,
+	 * Wyszukuje wÄ™zeÅ‚ z danym kluczem. JeÅ›li takiego nie ma,
 	 * zwraca null.
 	 * @param key Szukany klucz.
-	 * @return Liœæ zawieraj¹cy dany klucz. Jeœli takiego nie ma, to null.
+	 * @return LiÅ›Ä‡ zawierajÄ…cy dany klucz. JeÅ›li takiego nie ma, to null.
 	 */
 	private Node<K,V> find(K key){
 		LeafNode<K,V> leaf = searchForNode(key);
@@ -82,9 +82,9 @@ public class BPlusTree<K extends Comparable<K>, V> {
 	}
 	
 	/**
-	 * Dodaje now¹ wartoœæ do drzewa.
-	 * @param key Klucz wartoœci.	
-	 * @param value Wartoœæ.
+	 * Dodaje nowÄ… wartoÅ›Ä‡ do drzewa.
+	 * @param key Klucz wartoÅ›ci.	
+	 * @param value WartoÅ›Ä‡.
 	 */
 	public void insert(K key, V value){
 		int newPageID = pageManager.allocateNewPage();
@@ -104,10 +104,10 @@ public class BPlusTree<K extends Comparable<K>, V> {
 	}
 	
 	/**
-	 * Dodaje wartoœæ dodatkow¹ do jednego z wêz³ów na drzewie,
-	 * prechowuj¹cego podany klucz.
-	 * @param nodeKey Klucz znajduj¹cy siê w szukanym wêŸle.
-	 * @param value Dodatkowa wartoœæ.
+	 * Dodaje wartoÅ›Ä‡ dodatkowÄ… do jednego z wÄ™zÅ‚Ã³w na drzewie,
+	 * prechowujÄ…cego podany klucz.
+	 * @param nodeKey Klucz znajdujÄ…cy siÄ™ w szukanym wÄ™Åºle.
+	 * @param value Dodatkowa wartoÅ›Ä‡.
 	 */
 	public void insertNodeValue(K nodeKey,V value){
 		int newPageID = pageManager.allocateNewPage();
@@ -117,10 +117,10 @@ public class BPlusTree<K extends Comparable<K>, V> {
 	}
 
 	/**
-	 * Usuwa wartoœæ dodatkow¹ z jednego z wêz³ów na drzewie,
-	 * prechowuj¹cego podany klucz.
-	 * @param nodeKey Klucz znajduj¹cy siê w szukanym wêŸle.
-	 * @param value Dodatkowa wartoœæ.
+	 * Usuwa wartoÅ›Ä‡ dodatkowÄ… z jednego z wÄ™zÅ‚Ã³w na drzewie,
+	 * prechowujÄ…cego podany klucz.
+	 * @param nodeKey Klucz znajdujÄ…cy siÄ™ w szukanym wÄ™Åºle.
+	 * @param value Dodatkowa wartoÅ›Ä‡.
 	 */
 	public void deleteNodeValue(K nodeKey,V value){
 		int newPageID = pageManager.allocateNewPage();
@@ -130,9 +130,9 @@ public class BPlusTree<K extends Comparable<K>, V> {
 	}
 	
 	/**
-	 * Zwraca wartoœæ zwi¹zan¹ z danym kluczem.
-	 * @param key Klucz szukanej wartoœci.
-	 * @return Wartoœæ danego klucza.
+	 * Zwraca wartoÅ›Ä‡ zwiÄ…zanÄ… z danym kluczem.
+	 * @param key Klucz szukanej wartoÅ›ci.
+	 * @return WartoÅ›Ä‡ danego klucza.
 	 */
 	public V retrieve(K key){
 		LeafNode<K,V> leaf = searchForNode(key);
@@ -149,9 +149,9 @@ public class BPlusTree<K extends Comparable<K>, V> {
 	}
 	
 	/**
-	 * Usuwa wartoœæ zwi¹zan¹ z danym kluczem.
-	 * @param key Klucz usuwanej wartoœci.
-	 * @return true jeœli usuniêto wartoœæ, false jeœli jej nie by³o.
+	 * Usuwa wartoÅ›Ä‡ zwiÄ…zanÄ… z danym kluczem.
+	 * @param key Klucz usuwanej wartoÅ›ci.
+	 * @return true jeÅ›li usuniÄ™to wartoÅ›Ä‡, false jeÅ›li jej nie byÅ‚o.
 	 */
 	public boolean remove(K key){
 		if(find(key) == null){

@@ -4,10 +4,10 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
- * Klasa wewnêtrznych wêz³ów drzewa, nie przechowuj¹ wartoœci lecz wskazania na kolejne wêz³y drzewa
- * 
- * @param <K> Typ s³u¿¹cy za klucze w drzewie. Musi implementowaæ Comparable.
- * @param <V> Typ s³u¿¹cy za wartoœci w drzewie.
+ * Klasa wewnÄ™trznych wÄ™zÅ‚Ã³w drzewa, nie przechowujÄ… wartoÅ›ci lecz wskazania na kolejne wÄ™zÅ‚y drzewa
+ * @author Kacper Kozerski, Adam Michalski, RafaÅ‚ MuszyÅ„ski
+ * @param <K> Typ sÅ‚uÅ¼Ä…cy za klucze w drzewie. Musi implementowaÄ‡ Comparable.
+ * @param <V> Typ sÅ‚uÅ¼Ä…cy za wartoÅ›ci w drzewie.
  */
 
 public class InnerNode<K extends Comparable<K>, V> extends Node<K, V> implements Serializable {
@@ -15,25 +15,25 @@ public class InnerNode<K extends Comparable<K>, V> extends Node<K, V> implements
 	
 	/**
 	 * Tworzy pusty InnerNode o zadanej maksymalnej liczbie kluczy.
-	 * @param order Maksymalna liczba kluczy w wêŸle.
+	 * @param order Maksymalna liczba kluczy w wÄ™Åºle.
 	 */
 	public InnerNode(int order) {
 		super(order);
 		pageIDs = new ArrayList<Integer>(ORDER+1);
 	}
 	
-	// innerNode maj¹ mniejsz¹ minimaln¹ liczbê kluczy, zapobiega to
-	// przepe³nianiu drzewa przy po¿yczaniu kluczy od wêz³ów s¹siednich
+	// innerNode majÄ… mniejszÄ… minimalnÄ… liczbÄ™ kluczy, zapobiega to
+	// przepeÅ‚nianiu drzewa przy poÅ¼yczaniu kluczy od wÄ™zÅ‚Ã³w sÄ…siednich
 	public boolean canLendAKey(){
 		return keys.size() > Math.ceil((double)(ORDER+1)/2-1);
 	}
 	
 	/**
-	 * Zwraca wêze³-dziecko o podanym indeksie.
+	 * Zwraca wÄ™zeÅ‚-dziecko o podanym indeksie.
 	 * @param index Indeks dziecka.
-	 * @param currentLevel Poziom wêz³a.
-	 * @param pageManager Menad¿er stron drzewa.
-	 * @return Wêze³-dziecko o podanym indeksie.
+	 * @param currentLevel Poziom wÄ™zÅ‚a.
+	 * @param pageManager MenadÅ¼er stron drzewa.
+	 * @return WÄ™zeÅ‚-dziecko o podanym indeksie.
 	 */
 	public Node<K, V> getChild(int index, int currentLevel, PageManager<K, V> pageManager){
 		return pageManager.getNodeFromPage(pageIDs.get(index), currentLevel - 1);
@@ -42,7 +42,7 @@ public class InnerNode<K extends Comparable<K>, V> extends Node<K, V> implements
 	/**
 	 * Ustawia wskazanie na dziecko na odpowiednim indeksie
 	 * na danej stronie.
-	 * @param index Indeks dziecka, którego numer strony jest zmieniony.
+	 * @param index Indeks dziecka, ktÃ³rego numer strony jest zmieniony.
 	 * @param pageNumber Numer strony dziecka.
 	 */
 	public void setChild(int index, int pageNumber){
@@ -132,11 +132,11 @@ public class InnerNode<K extends Comparable<K>, V> extends Node<K, V> implements
 	}
 	
 	/**
-	 * Zwraca lewego brata podanego dziecka. Jeœli nie istnieje, zwraca null.
-	 * @param childIndex Indeks dziecka, którego brata szukamy.
+	 * Zwraca lewego brata podanego dziecka. JeÅ›li nie istnieje, zwraca null.
+	 * @param childIndex Indeks dziecka, ktÃ³rego brata szukamy.
 	 * @param childLevel Poziom dziecka.
-	 * @param pageManager Menad¿er stron drzewa.
-	 * @return Lewy brat, jeœli istnieje.
+	 * @param pageManager MenadÅ¼er stron drzewa.
+	 * @return Lewy brat, jeÅ›li istnieje.
 	 */
 	public Node<K,V> getChildsLeftSibling(int childIndex, int childLevel, PageManager<K, V> pageManager){
 		if(childIndex > 0){
@@ -146,11 +146,11 @@ public class InnerNode<K extends Comparable<K>, V> extends Node<K, V> implements
 	}
 	
 	/**
-	 * Zwraca prawego brata podanego dziecka. Jeœli nie istnieje, zwraca null.
-	 * @param childIndex Indeks dziecka, którego brata szukamy.
+	 * Zwraca prawego brata podanego dziecka. JeÅ›li nie istnieje, zwraca null.
+	 * @param childIndex Indeks dziecka, ktÃ³rego brata szukamy.
 	 * @param childLevel Poziom dziecka.
-	 * @param pageManager Menad¿er stron drzewa.
-	 * @return Prawy brat, jeœli istnieje.
+	 * @param pageManager MenadÅ¼er stron drzewa.
+	 * @return Prawy brat, jeÅ›li istnieje.
 	 */
 	public Node<K,V> getChildsRightSibling(int childIndex, int childLevel, PageManager<K, V> pageManager){
 		if(childIndex < pageIDs.size()-1){
@@ -193,10 +193,10 @@ public class InnerNode<K extends Comparable<K>, V> extends Node<K, V> implements
 	}
 	
 	/**
-	 * Funkcja zwracaj¹ca klucz oddzielaj¹cy dwóch s¹siednich dzieci.
+	 * Funkcja zwracajÄ…ca klucz oddzielajÄ…cy dwÃ³ch sÄ…siednich dzieci.
 	 * @param childIndex Indeks jednego z dzieci.
 	 * @param leftSibling Czy druge dziecko jest lewym bratem.
-	 * @return Klucz oddzielaj¹cy wskazane dzieci.
+	 * @return Klucz oddzielajÄ…cy wskazane dzieci.
 	 */
 	public K getChildSplitKey(int childIndex, boolean leftSibling){
 		if(leftSibling && childIndex > 0){
@@ -208,10 +208,10 @@ public class InnerNode<K extends Comparable<K>, V> extends Node<K, V> implements
 	}
 	
 	/**
-	 * Funkcja zmieniaj¹ca klucz oddzielaj¹cy dwóch s¹siednich dzieci.
+	 * Funkcja zmieniajÄ…ca klucz oddzielajÄ…cy dwÃ³ch sÄ…siednich dzieci.
 	 * @param childIndex Indeks jednego z dzieci.
 	 * @param leftSibling Czy druge dziecko jest lewym bratem.
-	 * @param key Nowy klucz oddzielaj¹cy wskazane dzieci.
+	 * @param key Nowy klucz oddzielajÄ…cy wskazane dzieci.
 	 */
 	public void setChildSplitKey(int childIndex, boolean leftSibling, K key){
 		if(leftSibling && childIndex > 0){
@@ -222,8 +222,8 @@ public class InnerNode<K extends Comparable<K>, V> extends Node<K, V> implements
 	}
 	
 	/**
-	 * Funkcja usuwaj¹ca klucz oddzielaj¹cy dwóch s¹siednich dzieci wraz
-	 * z dzieckiem bêdacym bratem pierwszego dziecka.
+	 * Funkcja usuwajÄ…ca klucz oddzielajÄ…cy dwÃ³ch sÄ…siednich dzieci wraz
+	 * z dzieckiem bÄ™dacym bratem pierwszego dziecka.
 	 * @param childIndex Indeks jednego z dzieci.
 	 * @param leftSibling Czy druge dziecko jest lewym bratem.
 	 */

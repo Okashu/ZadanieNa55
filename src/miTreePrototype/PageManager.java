@@ -4,9 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *Klasa zarz¹dzaj¹ca stronami pamiêci
+ *Klasa zarzÄ…dzajÄ…ca stronami pamiÄ™ci
+ * @author Kacper Kozerski, Adam Michalski, RafaÅ‚ MuszyÅ„ski
  * @param <K> typ Klucza
- * @param <V> typ wartoœci
+ * @param <V> typ wartoÅ›ci
  */
 public class PageManager<K extends Comparable<K>, V> {
 	private int pageSize;
@@ -14,8 +15,8 @@ public class PageManager<K extends Comparable<K>, V> {
 	private List<MemoryPage<K, V>> pageList;
 	private boolean[] isPageUsed;
 	
-	/**Tworzy now¹ stronê i dodaje do listy 
-	 * @return Identyfikator nowej strony
+	/**Tworzy nowÄ… stronÄ™ i dodaje do listy. 
+	 * @return Identyfikator nowej strony.
 	 */
 	public int allocateNewPage(){
 		int newPageID = pageList.size();
@@ -23,8 +24,8 @@ public class PageManager<K extends Comparable<K>, V> {
 		return newPageID;
 	}
 	
-	/**Tworzy now¹ stronê z wartosci¹
-	 * @return identyfikator nowej strony
+	/**Tworzy nowÄ… stronÄ™, sÅ‚uÅ¼Ä…cÄ… do przechowywania wartoÅ›ci.
+	 * @return Identyfikator nowej strony.
 	 */
 	public int allocateNewValuePage(){
 		int newPageID = pageList.size();
@@ -32,8 +33,8 @@ public class PageManager<K extends Comparable<K>, V> {
 		return newPageID;
 	}
 	
-	/**Inicjalizujuje nowy menad¿er stron
-	 * @param pageSize rozmiar tworzonych stron
+	/**Inicjalizujuje nowy menadÅ¼er stron
+	 * @param pageSize Rozmiar tworzonych stron.
 	 */
 	public PageManager(int pageSize){
 		this.pageSize = pageSize;
@@ -52,10 +53,10 @@ public class PageManager<K extends Comparable<K>, V> {
 		return treeHeight;
 	}
 	
-	/**Czyta Node z danej strony i poziomu
-	 * @param pageID identyfikator strony
-	 * @param level poziom
-	 * @return szukany Node
+	/**Czyta Node z danej strony i poziomu.
+	 * @param pageID Identyfikator strony.
+	 * @param level Poziom.
+	 * @return Szukany Node.
 	 */
 	public Node<K, V> getNodeFromPage(int pageID, int level){
 		int size = (int)(pageSize / Math.pow(2, level));
@@ -79,14 +80,14 @@ public class PageManager<K extends Comparable<K>, V> {
 	}
 	
 	/**
-	 * Zapisuje nowego node na danej stronie i poziomie
+	 * Zapisuje nowego node na danej stronie i poziomie.
 	 */
 	public void writeNodeToPage(Node<K, V> node, int pageID, int level){
 		pageList.get(pageID).write(node, level, treeHeight);
 	}
 	
-	/**S³u¿y do liczenia iloœci u¿ywanych stron
-	 * @param pageID numer strony do ustawienia jako u¿ywana
+	/**SÅ‚uÅ¼y do liczenia iloÅ›ci uÅ¼ywanych stron
+	 * @param pageID numer strony do ustawienia jako uÅ¼ywanÄ….
 	 */
 	public void setPageUsed(int pageID){
 		isPageUsed[pageID] = true;

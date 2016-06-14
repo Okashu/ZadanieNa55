@@ -10,14 +10,15 @@ import java.io.ObjectOutputStream;
 
 
 /**
- * Klasa specjalnych stron pamiêci. Ka¿da z nich przechowuje jedn¹ zmienn¹ typu V i nic wiêcej.
- * (w przeciwieñstwie do normalnych MemoryPage, które przechowuj¹ po kilka Node'ów)
+ * Klasa specjalnych stron pamiÄ™ci. KaÅ¼da z nich przechowuje jednÄ… zmiennÄ… typu V i nic wiÄ™cej.
+ * (w przeciwieÅ„twie do normalnych MemoryPage, ktÃ³re przechowujÄ… po kilka Node'Ã³w)
+ * @author Kacper Kozerski, Adam Michalski, RafaÅ‚ MuszyÅ„ski
  */
 public class ValuePage<K extends Comparable<K>, V> extends MemoryPage<K, V> {
 	
 	/**
-	 * Tworzy pust¹ stronê pamiêci.
-	 * @param pageID Numer strony w powi¹zanym z ni¹ pageManagerze.
+	 * Tworzy pustÄ… stronÄ™ pamiÄ™ci.
+	 * @param pageID Numer strony w powiÄ…zanym z niÄ… pageManagerze.
 	 * @param pageSize Rozmiar strony w bajtach.
 	 */
 	public ValuePage(int pageID, int pageSize){
@@ -25,8 +26,8 @@ public class ValuePage<K extends Comparable<K>, V> extends MemoryPage<K, V> {
 	}
 	
 	/**
-	 * Zapisuje podan¹ wartoœæ na stronie (do pliku).
-	 * @param value Wartoœæ do zapisania.
+	 * Zapisuje podanÄ… wartoÅ›Ä‡ na stronie (do pliku).
+	 * @param value WartoÅ›Ä‡ do zapisania.
 	 */
 	public void writeValue(V value){
 		File file = new File(fileName);
@@ -48,8 +49,8 @@ public class ValuePage<K extends Comparable<K>, V> extends MemoryPage<K, V> {
 
 	}
 	/**
-	 * Odczytuje zapisan¹ na stronie wartoœæ.
-	 * @return Odczytana wartoœæ.
+	 * Odczytuje zapisanÄ… na stronie wartoÅ›Ä‡.
+	 * @return Odczytana wartoÅ›Ä‡.
 	 */
 	public V readValue(){
 		File file = new File(fileName);

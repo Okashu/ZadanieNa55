@@ -2,6 +2,11 @@ package miTreePrototype;
 
 import java.util.StringTokenizer;
 
+/**
+ * 
+ * @author Kacper Kozerski, Adam Michalski, Rafał Muszńsski
+ *
+ */
 public class Main {
 
 	public static final int PAGESIZE = 2048;

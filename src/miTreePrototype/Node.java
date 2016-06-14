@@ -4,7 +4,7 @@ import java.util.*;
 
 /**
  * Klasa abstrakcyjna węzłów drzewa.
- * 
+ * @author Kacper Kozerski, Adam Michalski, Rafał Muszyński
  * @param <K> Typ służący za klucze w drzewie. Musi implementować Comparable.
  * @param <V> Typ służący za wartości w drzewie.
  */
@@ -32,7 +32,7 @@ public abstract class Node<K extends Comparable<K>, V> implements java.io.Serial
 	public List<V> nodeValueList;
 
 	/**
-	 * Tworzy nowy węzeł drzewa o podanym rzędzie (ilości kluczy).
+	 * Tworzy nowy węzeł‚ drzewa o podanym rzędzie (ilości kluczy).
 	 * @param order Rząd węzła.
 	 */
 	Node(int order) {

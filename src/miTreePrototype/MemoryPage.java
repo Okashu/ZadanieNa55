@@ -10,8 +10,9 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 /**
- * Klasa zajmuje siê obs³ug¹ strony pamieci.
- * Ka¿da strona to plik binarny zapisywany w folderze memoryPages
+ * Klasa zajmuje siÄ™ obsÅ‚ugÄ… strony pamieci.
+ * KaÅ¼da strona to plik binarny zapisywany w folderze memoryPages
+ * @author Kacper Kozerski, Adam Michalski, RafaÅ‚ MuszyÅ„ski
  * @param <K> typ kluczy
  * @param <V> typ wartosci
  */
@@ -19,7 +20,7 @@ public class MemoryPage<K extends Comparable<K>, V> {
 	protected int pageSize;
 	protected String fileName;
 
-	/**Tworzy now¹ stronê w nowym pliku binarnym [numer pageID].BIN
+	/**Tworzy nowÄ… stronÄ™ w nowym pliku binarnym [numer pageID].BIN
 	 * @param pageID numer identyfikacyjny strony
 	 * @param pageSize rozmiar strony
 	 */
@@ -41,7 +42,7 @@ public class MemoryPage<K extends Comparable<K>, V> {
 		fileName = "memoryPages/" + Integer.toString(pageID) + ".BIN";
 		try {
 			FileOutputStream out = new FileOutputStream(fileName);
-			write(out, pageSize); // tworzy plik i zape³nia niczym
+			write(out, pageSize); // tworzy plik i zapeï¿½nia niczym
 			out.close();
 		} catch (IOException e) {
 			System.out.println("ERROR: IOException while creating memory page!");
@@ -50,10 +51,10 @@ public class MemoryPage<K extends Comparable<K>, V> {
 		}
 	}
 
-	/**Zapisuje danego Node na danym poziomie w stronie pamiêci
-	 * @param node node który trzeba zapisac
-	 * @param lvl poziom ma którym go zapisujemy
-	 * @param height wysokoœc drzewa
+	/**Zapisuje danego Node na danym poziomie w stronie pamiÄ™ci.
+	 * @param node Node, ktÃ³ry trzeba zapisaÄ‡.
+	 * @param lvl Poziom, na ktÃ³rym ma byÄ‡ zapisany.
+	 * @param height WysokoÅ›Ä‡ drzewa.
 	 */
 	public void write(Node<K, V> node, int lvl, int height) {
 		if(this instanceof ValuePage){
@@ -62,7 +63,7 @@ public class MemoryPage<K extends Comparable<K>, V> {
 		}
 		File file = new File(fileName);
 		File temp = new File("temp.BIN");
-		int beginning = 0;	//liczba bitów przed node'em do wpisania
+		int beginning = 0;	//liczba bitï¿½w przed node'em do wpisania
 		int nodeSize =  (int) (pageSize / Math.pow(2, lvl));
 		int nodeLength = 0;
 		beginning = (lvl == height) ? 0 : nodeSize;
@@ -86,7 +87,7 @@ public class MemoryPage<K extends Comparable<K>, V> {
 			}
 			
 			in.skip(nodeSize);
-			if (lvl != 1) // nie liœæ, kopiowanie reszty
+			if (lvl != 1) // nie liï¿½ï¿½, kopiowanie reszty
 			{
 				for (int i = beginning + nodeSize; i < pageSize; i++)
 					out.write(in.read());
@@ -113,9 +114,9 @@ public class MemoryPage<K extends Comparable<K>, V> {
 
 	}
 
-	/**Zwraca d³ugoœæ serializacji danego obiektu
-	 * @param obj obiekt serializowany
-	 * @return d³ugoœæ serializacji
+	/**Zwraca dÅ‚ugoÅ›Ä‡ serializacji danego obiektu
+	 * @param obj Obiekt serializowany.
+	 * @return dÅ‚ugoÅ›Ä‡ serializacji
 	 * @throws IOException 
 	 */
 	protected int serializationLength(Object obj) throws IOException {
@@ -126,10 +127,10 @@ public class MemoryPage<K extends Comparable<K>, V> {
 		return out.toByteArray().length;
 	}
 
-	/**zapisuje Node w danym miejscu w pliku
-	 * @param out
-	 * @param node
-	 * @return
+	/**zapisuje Node w danym miejscu w pliku.
+	 * @param out StrumieÅ„ wyjÅ›cia, uÅ¼ywany przy zapisywaniu.
+	 * @param node WÄ™zeÅ‚ do zapisania.
+	 * @return DÅ‚ugpoÅ›Ä‡ zapisywanego Node'a w bajtach.
 	 * @throws IOException
 	 */
 	private int write(FileOutputStream out, Node<K, V> node) throws IOException {
@@ -141,9 +142,9 @@ public class MemoryPage<K extends Comparable<K>, V> {
 	}
 
 	/**Zapisuje puste miejsca po serializacji 
-	 * by zachowaæ okreœlone wielkoœci poziomów w stronie pamiêci
-	 * @param out
-	 * @param offset
+	 * by zachowaÄ‡ okreÅ›lone wielkoÅ›ci poziomÃ³w w stronie pamiÄ™ci
+	 * @param out StrumieÅ„ wyÅ›cia, uÅ¼ywany do zapisywania.
+	 * @param offset PrzesuniÄ™cie pliku przy zapisywaniu (liczba bajtÃ³w do pominiÄ™cia).
 	 * @throws IOException
 	 */
 	private void write(FileOutputStream out, int offset) throws IOException {
@@ -154,9 +155,9 @@ public class MemoryPage<K extends Comparable<K>, V> {
 
 	}
 	
-	/**Czyta Node z okreœlonego poziomu na stronie pamiêci
-	 * @param offset poziom, iloœæ bitów w pliku przed Nodem 
-	 * @return Zczytany Node
+	/**Czyta Node z okreÅ›lonego poziomu na stronie pamiÄ™ci.
+	 * @param offset Poziom, iloÅ›Ä‡ bitÃ³w w pliku przed Nodem.
+	 * @return Odczytany Node.
 	 */
 	public Node<K, V> read(int offset) {
 		if(this instanceof ValuePage){
